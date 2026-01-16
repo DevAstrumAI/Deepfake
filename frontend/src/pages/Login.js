@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, LogIn, Mail, Lock, User } from 'lucide-react';
+import { Shield, LogIn, Lock, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -71,7 +71,7 @@ const Results = () => {
   }, [fileId, loading, result, files.length, showAllFiles]);
 
   // Define fetchResults function outside useEffect so it can be used by retry button
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
       try {
         // If no fileId, just show the files list
         if (!fileId) {
@@ -157,14 +157,14 @@ const Results = () => {
         toast.error('Failed to fetch results');
         setLoading(false);
       }
-  };
+  }, [fileId, api, files, loading]);
 
   // Call fetchResults when component mounts or fileId changes
   useEffect(() => {
     if (fileId) {
       fetchResults();
     }
-  }, [fileId, api, files]);
+  }, [fileId, fetchResults]);
 
   const getPredictionColor = (prediction) => {
     switch (prediction?.toUpperCase()) {
@@ -199,8 +199,6 @@ const Results = () => {
     }
   };
 
-  const { getAuthHeaders } = useAuth();
-  
   const generateReport = async () => {
     if (!fileId) {
       toast.error('No file selected');
@@ -1234,7 +1232,6 @@ const Results = () => {
     if (!result || !result.frame_analysis) return null;
 
     const frameAnalysis = result.frame_analysis;
-    const videoInfo = result.video_info || {};
     const videoScore = result.video_score || {};
 
     // Prepare frame data for charts

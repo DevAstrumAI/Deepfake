@@ -8,7 +8,6 @@ import {
   Image, 
   Video, 
   Music, 
-  X, 
   CheckCircle, 
   AlertCircle,
   Loader2,
@@ -22,7 +21,6 @@ const Upload = () => {
   const navigate = useNavigate();
   const { api, loading } = useAnalysis();
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [dragActive, setDragActive] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const newFiles = acceptedFiles.map(file => ({
