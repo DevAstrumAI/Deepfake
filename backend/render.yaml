@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: deepfake-backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+    startCommand: python start_server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: OPENAI_API_KEY
+        sync: false  # Set this in Render dashboard
+      - key: SECRET_KEY
+        generateValue: true  # Render will generate a secure key
+    healthCheckPath: /health
+    healthCheckGracePeriod: 60  # 1 minute grace period
+    plan: starter  # Use starter plan for more memory
+

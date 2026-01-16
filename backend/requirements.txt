@@ -1,0 +1,37 @@
+# Backend requirements for Deepfake Detection Web App
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+pydantic[email]>=2.5.0
+email-validator>=2.0.0
+
+# Image and video processing dependencies (no model loading)
+opencv-python-headless>=4.8.0  # Headless version uses less memory
+pillow>=10.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+scikit-image>=0.21.0
+scipy>=1.11.0
+
+# Additional web app dependencies
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.0
+python-dotenv>=1.0.0
+aiofiles>=23.2.1
+reportlab>=4.0.7
+jinja2>=3.1.2
+
+# Audio processing dependencies (for feature extraction only, no model loading)
+librosa>=0.10.0
+soundfile>=0.12.0
+resampy>=0.4.0
+
+# LLM and PDF generation dependencies
+ollama>=0.1.0
+requests>=2.31.0
+openai>=1.0.0
+
+# Visualization dependencies (already included above)
+# matplotlib>=3.7.0

@@ -1,0 +1,32 @@
+# Uploads directory - user uploaded files should never be committed
+uploads/
+uploads/**
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+file_metadata.db
+
+# Generated reports
+uploads/reports/
+reports/
+*.pdf
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
