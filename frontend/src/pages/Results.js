@@ -208,12 +208,8 @@ const Results = () => {
       toast.loading('Generating PDF report...', { id: 'pdf-report' });
       
       const API_BASE_URL = process.env.REACT_APP_API_URL || '';
-      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${API_BASE_URL}/report/${fileId}`, {
         method: 'GET',
-        headers: {
-          ...(token && { 'Authorization': `Bearer ${token}` }),
-        },
       });
       
       if (!response.ok) {
@@ -1444,8 +1440,7 @@ const Results = () => {
     if (result.type === 'audio') {
       const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
       const baseAudioUrl = `${apiBaseUrl}/uploads/${fileId}${getFileExtension(result.filename)}`;
-      const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      const secureAudioUrl = authToken ? `${baseAudioUrl}?token=${encodeURIComponent(authToken)}` : baseAudioUrl;
+      const secureAudioUrl = baseAudioUrl;
 
       return (
         <div className="space-y-6">
@@ -1819,12 +1814,8 @@ const Results = () => {
                                       toast.loading('Generating PDF report...', { id: `pdf-${file.file_id}` });
                                       
                                       const API_BASE_URL = process.env.REACT_APP_API_URL || '';
-                                      const token = localStorage.getItem('auth_token');
                                       const response = await fetch(`${API_BASE_URL}/report/${file.file_id}`, {
                                         method: 'GET',
-                                        headers: {
-                                          ...(token && { 'Authorization': `Bearer ${token}` }),
-                                        },
                                       });
                                       
                                       if (!response.ok) {

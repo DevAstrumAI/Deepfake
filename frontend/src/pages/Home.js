@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+// Authentication removed
 import { motion } from 'framer-motion';
 import { 
   Shield, 
@@ -16,13 +16,9 @@ import {
 
 const Home = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   
   const handleStartAnalysis = (e) => {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      navigate('/login');
-    }
+    // No auth needed - can proceed directly
   };
   
   const features = [

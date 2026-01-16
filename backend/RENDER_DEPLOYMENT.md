@@ -53,7 +53,14 @@ If you're using `render.yaml`, the configuration is already set up. Just:
 1. **Root Directory**: Must be set to `backend` in Render dashboard
 2. **Port**: Render automatically sets `PORT` environment variable - don't hardcode it
 3. **OpenAI API Key**: Must be set as environment variable `OPENAI_API_KEY`
-4. **Database**: SQLite database will be created automatically in the `uploads/` directory
+4. **Database**: 
+   - ⚠️ **IMPORTANT**: On Render's **free tier**, the filesystem is **ephemeral**
+   - SQLite database will be **deleted** when service restarts or sleeps
+   - **User credentials will be lost** on restart
+   - **Solutions**:
+     - **Option 1**: Upgrade to **Starter plan** ($7/month) for persistent disk storage
+     - **Option 2**: Use Render's **PostgreSQL database** (free for 90 days, then $7/month)
+     - See `DATABASE_PERSISTENCE.md` for detailed instructions
 5. **File Storage**: Files are stored in `uploads/` directory (ephemeral on free tier)
 
 ### Quick Start Checklist:

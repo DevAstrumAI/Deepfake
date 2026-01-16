@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useAuth } from './AuthContext';
-
 // API base URL - use production backend URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
 
@@ -74,7 +72,6 @@ const AnalysisContext = createContext();
 // Provider component
 export function AnalysisProvider({ children }) {
   const [state, dispatch] = useReducer(analysisReducer, initialState);
-  const { getAuthHeaders } = useAuth();
 
   // API functions
   const api = {
@@ -90,7 +87,6 @@ export function AnalysisProvider({ children }) {
         const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            ...getAuthHeaders(),
           },
         });
 
@@ -113,9 +109,7 @@ export function AnalysisProvider({ children }) {
         dispatch({ type: ActionTypes.SET_LOADING, payload: true });
         dispatch({ type: ActionTypes.CLEAR_ERROR });
 
-        const response = await axios.post(`${API_BASE_URL}/analyze/${fileId}`, {}, {
-          headers: getAuthHeaders(),
-        });
+        const response = await axios.post(`${API_BASE_URL}/analyze/${fileId}`, {});
         
         dispatch({ type: ActionTypes.UPDATE_FILE, payload: { file_id: fileId, status: 'processing' } });
         toast.success('Analysis started!');
@@ -133,9 +127,7 @@ export function AnalysisProvider({ children }) {
     // Get results
     getResults: async (fileId) => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/results/${fileId}`, {
-          headers: getAuthHeaders(),
-        });
+        const response = await axios.get(`${API_BASE_URL}/results/${fileId}`);
         return response.data;
       } catch (error) {
         const errorMessage = error.response?.data?.detail || 'Failed to get results';
@@ -148,9 +140,7 @@ export function AnalysisProvider({ children }) {
     listFiles: async () => {
       try {
         dispatch({ type: ActionTypes.SET_LOADING, payload: true });
-        const response = await axios.get(`${API_BASE_URL}/files`, {
-          headers: getAuthHeaders(),
-        });
+        const response = await axios.get(`${API_BASE_URL}/files`);
         const files = response.data.files || [];
         console.log('listFiles response:', files);
         dispatch({ type: ActionTypes.SET_FILES, payload: files });
@@ -171,9 +161,7 @@ export function AnalysisProvider({ children }) {
     // Delete file
     deleteFile: async (fileId) => {
       try {
-        await axios.delete(`${API_BASE_URL}/files/${fileId}`, {
-          headers: getAuthHeaders(),
-        });
+        await axios.delete(`${API_BASE_URL}/files/${fileId}`);
         dispatch({ type: ActionTypes.REMOVE_FILE, payload: fileId });
         toast.success('File deleted successfully!');
       } catch (error) {
@@ -248,40 +236,28 @@ export function AnalysisProvider({ children }) {
     poll();
   };
 
-  // Load files on mount and when user changes
-  const { user, isAuthenticated } = useAuth();
+  // Load files on mount
   const hasLoadedRef = useRef(false);
   
   useEffect(() => {
-    // Only load files if user is authenticated
-    if (isAuthenticated && user) {
-      const currentUserId = user.user_id;
-      // Only load if we haven't loaded for this user yet
-      if (!hasLoadedRef.current || hasLoadedRef.current !== currentUserId) {
-        hasLoadedRef.current = currentUserId;
-        console.log('Loading files for user:', user.username);
-        api.listFiles()
-          .then(files => {
-            console.log('Files loaded successfully:', files?.length || 0, 'files');
-            if (files && files.length > 0) {
-              console.log('Files data:', files);
-            }
-          })
-          .catch(error => {
-            console.error('Error loading files:', error);
-            if (error.response?.status !== 401) { // Don't show error for auth issues
-              toast.error('Failed to load files');
-            }
-          });
-      }
-    } else {
-      // Clear files when user logs out
-      hasLoadedRef.current = false;
-      console.log('User not authenticated, clearing files');
-      dispatch({ type: ActionTypes.SET_FILES, payload: [] });
+    // Load files on mount
+    if (!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      console.log('Loading files...');
+      api.listFiles()
+        .then(files => {
+          console.log('Files loaded successfully:', files?.length || 0, 'files');
+          if (files && files.length > 0) {
+            console.log('Files data:', files);
+          }
+        })
+        .catch(error => {
+          console.error('Error loading files:', error);
+          toast.error('Failed to load files');
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, user?.user_id]); // Reload when authentication or user changes
+  }, []); // Load once on mount
 
   const value = {
     ...state,

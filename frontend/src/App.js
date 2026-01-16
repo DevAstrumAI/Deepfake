@@ -10,40 +10,33 @@ import Upload from './pages/Upload';
 import Results from './pages/Results';
 import Educational from './pages/Educational';
 import About from './pages/About';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import AudioDebug from './components/AudioDebug';
-import ProtectedRoute from './components/ProtectedRoute';
 
 // Context
 import { AnalysisProvider } from './context/AnalysisContext';
-import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <AnalysisProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            
-            <motion.main
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="pt-16"
-            >
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
-                <Route path="/results/:fileId" element={<ProtectedRoute><Results /></ProtectedRoute>} />
-                <Route path="/educational" element={<Educational />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/debug-audio" element={<ProtectedRoute><AudioDebug /></ProtectedRoute>} />
-              </Routes>
-            </motion.main>
+    <AnalysisProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          
+          <motion.main
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="pt-16"
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/results/:fileId" element={<Results />} />
+              <Route path="/educational" element={<Educational />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/debug-audio" element={<AudioDebug />} />
+            </Routes>
+          </motion.main>
           
           <Toaster
             position="top-right"
@@ -72,7 +65,6 @@ function App() {
         </div>
       </Router>
     </AnalysisProvider>
-    </AuthProvider>
   );
 }
 

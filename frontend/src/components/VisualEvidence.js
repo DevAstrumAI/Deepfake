@@ -79,13 +79,10 @@ const VisualEvidence = ({
   const videoRef = useRef(null);
   const frameCanvasRef = useRef(null);
   
-  // API paths for secure asset loading
+  // API paths for asset loading
   const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
   const baseFileUrl = fileId ? `${apiBaseUrl}/uploads/${fileId}` : null;
-  const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-  const secureFileUrl = baseFileUrl
-    ? `${baseFileUrl}${authToken ? `?token=${encodeURIComponent(authToken)}` : ''}`
-    : null;
+  const secureFileUrl = baseFileUrl;
   const overlayOptions = getOverlayOptionsByType(actualFileType);
   
   // Get frame analysis data
@@ -1832,15 +1829,10 @@ const VisualEvidence = ({
               onError={(e) => {
                 console.error('Image load error:', e);
                 // Try to load using fetch with auth headers as fallback
-                const token = localStorage.getItem('auth_token');
-                if (token && fileId) {
+                if (fileId) {
                   const fetchUrl = secureFileUrl || baseFileUrl;
                   if (fetchUrl) {
-                    fetch(fetchUrl, {
-                    headers: {
-                      'Authorization': `Bearer ${token}`
-                    }
-                  })
+                    fetch(fetchUrl)
                   .then(response => {
                     if (response.ok) {
                       return response.blob();

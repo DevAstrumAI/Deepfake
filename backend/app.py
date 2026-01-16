@@ -7,7 +7,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, D
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+# Authentication removed - no longer needed
 from pydantic import BaseModel, EmailStr
 from typing import Optional, Dict, List
 import os
@@ -25,7 +25,7 @@ import base64
 from io import BytesIO
 from PIL import Image as PILImage
 import cv2
-from jose import JWTError, jwt
+# JWT imports removed - authentication no longer needed
 from passlib.context import CryptContext
 import bcrypt
 # Import OpenAI-based detection modules
@@ -122,10 +122,7 @@ DB_PATH = DB_DIR / "file_metadata.db"
 # Ensure database directory exists
 DB_DIR.mkdir(parents=True, exist_ok=True)
 
-# JWT Configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production-min-32-chars")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 days
+# JWT Configuration removed - authentication no longer needed
 
 # Password hashing - use bcrypt directly to avoid passlib compatibility issues
 import bcrypt
@@ -174,9 +171,7 @@ pwd_context = CryptContext(
     deprecated="auto"
 )
 
-# Security
-security = HTTPBearer()
-optional_security = HTTPBearer(auto_error=False)
+# Authentication removed
 
 def init_database():
     """Initialize SQLite database for users and file metadata"""
@@ -239,18 +234,12 @@ def init_database():
                     ADD COLUMN user_id TEXT
                 ''')
                 
-                # Delete existing files without user_id (they belong to no user)
-                cursor.execute('''
-                    DELETE FROM file_metadata 
-                    WHERE user_id IS NULL
-                ''')
-                
-                # Now make user_id NOT NULL
+                # Migration: user_id is now optional (default 'anonymous')
                 # SQLite doesn't support ALTER COLUMN, so we need to recreate the table
                 cursor.execute('''
                     CREATE TABLE file_metadata_new (
                         file_id TEXT PRIMARY KEY,
-                        user_id TEXT NOT NULL,
+                        user_id TEXT DEFAULT 'anonymous',
                         filename TEXT NOT NULL,
                         file_type TEXT NOT NULL,
                         file_size INTEGER NOT NULL,
@@ -259,28 +248,27 @@ def init_database():
                         status TEXT DEFAULT 'uploaded',
                         analysis_result TEXT,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        FOREIGN KEY (user_id) REFERENCES users(user_id)
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 ''')
                 
                 cursor.execute('''
                     INSERT INTO file_metadata_new 
-                    SELECT file_id, user_id, filename, file_type, file_size, 
+                    SELECT file_id, COALESCE(user_id, 'anonymous'), filename, file_type, file_size, 
                            upload_time, file_path, status, analysis_result, 
                            created_at, updated_at
                     FROM file_metadata
-                    WHERE user_id IS NOT NULL
                 ''')
                 
                 cursor.execute('DROP TABLE file_metadata')
                 cursor.execute('ALTER TABLE file_metadata_new RENAME TO file_metadata')
         
         # Create table for file metadata (if it doesn't exist)
+        # user_id is now optional (can be NULL) since auth is removed
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS file_metadata (
                 file_id TEXT PRIMARY KEY,
-                user_id TEXT NOT NULL,
+                user_id TEXT DEFAULT 'anonymous',
                 filename TEXT NOT NULL,
                 file_type TEXT NOT NULL,
                 file_size INTEGER NOT NULL,
@@ -289,8 +277,7 @@ def init_database():
                 status TEXT DEFAULT 'uploaded',
                 analysis_result TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -589,55 +576,7 @@ def create_user(username: str, email: str, password: str) -> Optional[Dict]:
         logger.error(traceback.format_exc())
         return None
 
-def _decode_user_from_token(token: str) -> Dict:
-    """Decode JWT token and fetch user"""
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-    
-    # Get user from database
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT user_id, username, email
-            FROM users
-            WHERE user_id = ?
-        ''', (user_id,))
-        row = cursor.fetchone()
-        conn.close()
-        
-        if row is None:
-            raise credentials_exception
-        
-        return {
-            "user_id": row[0],
-            "username": row[1],
-            "email": row[2]
-        }
-    except Exception as e:
-        logger.error(f"Error getting current user: {e}")
-        raise credentials_exception
-
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict:
-    """Get current authenticated user from JWT token (Authorization header required)"""
-    if not credentials:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authorization credentials missing",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return _decode_user_from_token(credentials.credentials)
+# Authentication functions removed - app is now public
 
 # Pydantic models
 class UserSignup(BaseModel):
@@ -1420,114 +1359,7 @@ async def health_check():
         "message": "API is ready - models load on first use"
     }
 
-# Authentication endpoints
-@app.post("/auth/signup", response_model=Token)
-async def signup(user_data: UserSignup):
-    """User registration endpoint"""
-    # Check if username already exists
-    if get_user_by_username(user_data.username):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
-        )
-    
-    # Check if email already exists
-    if get_user_by_email(user_data.email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-    
-    # Validate password length
-    if len(user_data.password) < 6:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be at least 6 characters"
-        )
-    
-    # Validate and truncate password if necessary (bcrypt limit is 72 bytes)
-    password = user_data.password
-    password_bytes = password.encode('utf-8')
-    
-    if len(password_bytes) > 72:
-        # Truncate to 72 bytes before creating user
-        logger.warning(f"Password too long ({len(password_bytes)} bytes), truncating to 72 bytes")
-        truncated_bytes = password_bytes[:72]
-        # Decode, handling incomplete UTF-8 sequences
-        while len(truncated_bytes) > 0:
-            try:
-                password = truncated_bytes.decode('utf-8')
-                # Verify it's <= 72 bytes when re-encoded
-                if len(password.encode('utf-8')) <= 72:
-                    break
-                truncated_bytes = truncated_bytes[:-1]
-            except UnicodeDecodeError:
-                truncated_bytes = truncated_bytes[:-1]
-        else:
-            # Fallback
-            password = password[:72]
-    
-    # Create user with (possibly truncated) password
-    user = create_user(user_data.username, user_data.email, password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create user"
-        )
-    
-    # Create access token
-    access_token = create_access_token(data={"sub": user["user_id"]})
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": {
-            "user_id": user["user_id"],
-            "username": user["username"],
-            "email": user["email"]
-        }
-    }
-
-@app.options("/auth/login")
-async def login_options():
-    """Handle preflight OPTIONS request for login"""
-    return Response(status_code=200)
-
-@app.post("/auth/login", response_model=Token)
-async def login(user_data: UserLogin):
-    """User login endpoint"""
-    # Get user by username
-    user = get_user_by_username(user_data.username)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password"
-        )
-    
-    # Verify password
-    if not verify_password(user_data.password, user["hashed_password"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password"
-        )
-    
-    # Create access token
-    access_token = create_access_token(data={"sub": user["user_id"]})
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": {
-            "user_id": user["user_id"],
-            "username": user["username"],
-            "email": user["email"]
-        }
-    }
-
-@app.get("/auth/me")
-async def get_current_user_info(current_user: Dict = Depends(get_current_user)):
-    """Get current authenticated user information"""
-    return current_user
+# Authentication endpoints removed - app is now public
 
 @app.get("/debug/analysis_results")
 async def debug_analysis_results():
@@ -1550,10 +1382,9 @@ async def manual_cleanup(max_age_hours: int = 24):
 
 @app.post("/upload", response_model=FileInfo)
 async def upload_file(
-    file: UploadFile = File(...),
-    current_user: Dict = Depends(get_current_user)
+    file: UploadFile = File(...)
 ):
-    """Upload a file for analysis (requires authentication)"""
+    """Upload a file for analysis"""
     try:
         # Validate file
         if not file.filename:
@@ -1584,18 +1415,17 @@ async def upload_file(
             upload_time=datetime.now()
         )
         
-        # Store file info in memory and database (with user_id)
+        # Store file info in memory and database (no user_id needed)
         analysis_results[file_id] = {
             'file_info': file_info.dict(),
             'file_path': file_path,
-            'status': 'uploaded',
-            'user_id': current_user['user_id']
+            'status': 'uploaded'
         }
         
-        # Save to persistent database
-        save_file_metadata(file_id, file_info.dict(), file_path, current_user['user_id'], 'uploaded')
+        # Save to persistent database (use 'anonymous' as user_id)
+        save_file_metadata(file_id, file_info.dict(), file_path, 'anonymous', 'uploaded')
         
-        logger.info(f"File uploaded: {file.filename} ({file_type}) by user {current_user['username']}")
+        logger.info(f"File uploaded: {file.filename} ({file_type})")
         return file_info
         
     except Exception as e:
@@ -1605,19 +1435,14 @@ async def upload_file(
 @app.post("/analyze/{file_id}")
 async def analyze_file(
     file_id: str, 
-    background_tasks: BackgroundTasks,
-    current_user: Dict = Depends(get_current_user)
+    background_tasks: BackgroundTasks
 ):
-    """Start analysis for uploaded file (requires authentication)"""
+    """Start analysis for uploaded file"""
     try:
         if file_id not in analysis_results:
             raise HTTPException(status_code=404, detail="File not found")
         
         file_data = analysis_results[file_id]
-        
-        # Check if file belongs to current user
-        if file_data.get('user_id') != current_user['user_id']:
-            raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
         
         file_path = file_data['file_path']
         file_type = file_data['file_info']['file_type']
@@ -1637,20 +1462,15 @@ async def analyze_file(
 
 @app.get("/results/{file_id}", response_model=AnalysisResult)
 async def get_results(
-    file_id: str,
-    current_user: Dict = Depends(get_current_user)
+    file_id: str
 ):
-    """Get analysis results for a file (requires authentication)"""
+    """Get analysis results for a file"""
     try:
-        logger.info(f"Getting results for file_id: {file_id} for user {current_user['username']}")
+        logger.info(f"Getting results for file_id: {file_id}")
         
         # First check in-memory cache
         if file_id in analysis_results:
             file_data = analysis_results[file_id]
-            
-            # Check if file belongs to current user
-            if file_data.get('user_id') != current_user['user_id']:
-                raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
             
             result_data = file_data.get('result')
             
@@ -1715,10 +1535,10 @@ async def get_results(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/files")
-async def list_files(current_user: Dict = Depends(get_current_user)):
-    """List all uploaded files for current user (requires authentication)"""
+async def list_files():
+    """List all uploaded files"""
     try:
-        # Query database directly to ensure we get all files for this user
+        # Query database to get all files
         conn = get_db_connection()
         cursor = conn.cursor()
         
@@ -1726,9 +1546,8 @@ async def list_files(current_user: Dict = Depends(get_current_user)):
             SELECT file_id, filename, file_type, file_size, upload_time, 
                    status, analysis_result, created_at
             FROM file_metadata
-            WHERE user_id = ?
             ORDER BY created_at DESC
-        ''', (current_user['user_id'],))
+        ''')
         
         rows = cursor.fetchall()
         conn.close()
@@ -1756,7 +1575,7 @@ async def list_files(current_user: Dict = Depends(get_current_user)):
             
             files.append(file_data)
         
-        logger.info(f"Retrieved {len(files)} files for user {current_user['username']}")
+        logger.info(f"Retrieved {len(files)} files")
         return {"files": files}
         
     except Exception as e:
@@ -1765,20 +1584,14 @@ async def list_files(current_user: Dict = Depends(get_current_user)):
 
 @app.delete("/files/{file_id}")
 async def delete_file(
-    file_id: str,
-    current_user: Dict = Depends(get_current_user)
+    file_id: str
 ):
-    """Delete a file and its analysis results (requires authentication)"""
+    """Delete a file and its analysis results"""
     try:
         # Check in memory first
         file_path = None
         if file_id in analysis_results:
             file_data = analysis_results[file_id]
-            
-            # Check if file belongs to current user
-            if file_data.get('user_id') != current_user['user_id']:
-                raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
-            
             file_path = file_data.get('file_path')
         else:
             # Check database if not in memory
@@ -1786,7 +1599,7 @@ async def delete_file(
             cursor = conn.cursor()
             
             cursor.execute('''
-                SELECT user_id, file_path
+                SELECT file_path
                 FROM file_metadata
                 WHERE file_id = ?
             ''', (file_id,))
@@ -1797,13 +1610,7 @@ async def delete_file(
             if not row:
                 raise HTTPException(status_code=404, detail="File not found")
             
-            db_user_id, db_file_path = row
-            
-            # Check if file belongs to current user
-            if db_user_id != current_user['user_id']:
-                raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
-            
-            file_path = db_file_path
+            file_path = row[0]
         
         # Clean up file immediately (override delay for manual deletion)
         if file_path and Path(file_path).exists():
@@ -1816,7 +1623,7 @@ async def delete_file(
         # Remove from database
         delete_file_metadata(file_id)
         
-        logger.info(f"File {file_id} deleted by user {current_user['username']}")
+        logger.info(f"File {file_id} deleted")
         return {"message": "File deleted successfully"}
         
     except HTTPException:
@@ -2062,20 +1869,10 @@ async def serve_file_options(file_path: str):
 # Custom file serving endpoint to handle missing files gracefully
 @app.get("/uploads/{file_path:path}")
 async def serve_file(
-    file_path: str,
-    token: Optional[str] = None,
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security)
+    file_path: str
 ):
-    """Serve uploaded file with proper error handling (requires authentication)"""
+    """Serve uploaded file with proper error handling"""
     try:
-        jwt_token = token or (credentials.credentials if credentials else None)
-        if not jwt_token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authorization token is required to access files"
-            )
-        current_user = _decode_user_from_token(jwt_token)
-        
         # Extract file_id from path (handle both with and without extension)
         # Path format: {file_id} or {file_id}.{ext}
         file_id = Path(file_path).stem  # Get filename without extension
@@ -2084,7 +1881,7 @@ async def serve_file(
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT user_id, filename, file_type, file_path 
+            SELECT filename, file_type, file_path 
             FROM file_metadata 
             WHERE file_id = ?
         ''', (file_id,))
@@ -2095,11 +1892,7 @@ async def serve_file(
             logger.warning(f"File {file_id} not found in database")
             raise HTTPException(status_code=404, detail="File not found in database")
         
-        db_user_id, filename, file_type, stored_file_path = result
-        
-        # Check if file belongs to current user
-        if db_user_id != current_user['user_id']:
-            raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
+        filename, file_type, stored_file_path = result
         
         # Check if file exists on disk
         if not os.path.exists(stored_file_path):
@@ -2174,12 +1967,11 @@ pdf_generator = PDFReportGenerator()
 
 @app.get("/report/{file_id}")
 async def generate_pdf_report(
-    file_id: str,
-    current_user: Dict = Depends(get_current_user)
+    file_id: str
 ):
-    """Generate and download PDF report for analysis results (requires authentication)"""
+    """Generate and download PDF report for analysis results"""
     try:
-        logger.info(f"Generating PDF report for file_id: {file_id} for user {current_user['username']}")
+        logger.info(f"Generating PDF report for file_id: {file_id}")
         
         # Check in memory first, then database
         file_info = None
@@ -2188,11 +1980,6 @@ async def generate_pdf_report(
         
         if file_id in analysis_results:
             file_data = analysis_results[file_id]
-            
-            # Check if file belongs to current user
-            if file_data.get('user_id') != current_user['user_id']:
-                raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
-            
             file_info = file_data.get('file_info', {})
             analysis_result = file_data.get('result')
             status = file_data.get('status')
@@ -2202,7 +1989,7 @@ async def generate_pdf_report(
             cursor = conn.cursor()
             
             cursor.execute('''
-                SELECT user_id, filename, file_type, file_size, upload_time, 
+                SELECT filename, file_type, file_size, upload_time, 
                        status, analysis_result
                 FROM file_metadata
                 WHERE file_id = ?
@@ -2214,11 +2001,7 @@ async def generate_pdf_report(
             if not row:
                 raise HTTPException(status_code=404, detail="File not found")
             
-            db_user_id, filename, file_type, file_size, upload_time, db_status, analysis_result_json = row
-            
-            # Check if file belongs to current user
-            if db_user_id != current_user['user_id']:
-                raise HTTPException(status_code=403, detail="Access denied: File does not belong to you")
+            filename, file_type, file_size, upload_time, db_status, analysis_result_json = row
             
             file_info = {
                 'file_id': file_id,
