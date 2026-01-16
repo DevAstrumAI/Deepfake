@@ -88,8 +88,7 @@ else:
     allowed_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://deepfake-theta.vercel.app",
-        "https://*.vercel.app"  # Allow all Vercel preview deployments
+        "https://deepfake-theta.vercel.app"
     ]
 
 app.add_middleware(
