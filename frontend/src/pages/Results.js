@@ -19,7 +19,6 @@ import {
   Info
 } from 'lucide-react';
 import { useAnalysis } from '../context/AnalysisContext';
-import { useAuth } from '../context/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import toast from 'react-hot-toast';
 

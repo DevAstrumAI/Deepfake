@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   BookOpen, 
@@ -13,14 +13,8 @@ import {
   Target,
   Users
 } from 'lucide-react';
-import { useAnalysis } from '../context/AnalysisContext';
-
 const Educational = () => {
-  const { api } = useAnalysis();
-  const [loading, setLoading] = useState(false);
-
   // Educational content is now hardcoded in sections below
-  // Removed API call as it's not being used
 
   const sections = [
     {

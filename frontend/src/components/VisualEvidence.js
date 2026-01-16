@@ -1410,13 +1410,6 @@ const VisualEvidence = ({
     // Filter Grad-CAM heatmaps
     const gradcamHeatmaps = safeVisualEvidence.heatmaps.filter(h => h.type === 'gradcam' && h.image_data);
     
-    // Use selected heatmap or first available
-    const displayHeatmap = gradcamHeatmaps.length > 0 
-      ? gradcamHeatmaps[selectedHeatmapIndex >= 0 && selectedHeatmapIndex < gradcamHeatmaps.length 
-          ? selectedHeatmapIndex 
-          : 0]
-      : null;
-    
     // Heatmap overlay is now rendered on the image itself
     // This function doesn't need to render anything as controls are in side panel
           return null;
