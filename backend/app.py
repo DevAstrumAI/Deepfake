@@ -95,8 +95,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 # Global variables for detectors
@@ -1485,6 +1487,11 @@ async def signup(user_data: UserSignup):
             "email": user["email"]
         }
     }
+
+@app.options("/auth/login")
+async def login_options():
+    """Handle preflight OPTIONS request for login"""
+    return Response(status_code=200)
 
 @app.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
