@@ -17,22 +17,10 @@ import { useAnalysis } from '../context/AnalysisContext';
 
 const Educational = () => {
   const { api } = useAnalysis();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const response = await api.getEducationalContent();
-        setContent(response);
-      } catch (error) {
-        console.error('Error fetching educational content:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContent();
-  }, [api]);
+  // Educational content is now hardcoded in sections below
+  // Removed API call as it's not being used
 
   const sections = [
     {

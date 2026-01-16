@@ -96,6 +96,66 @@ const VisualEvidence = ({
   );
   const filteredFrames = filterSuspicious ? suspiciousFrames : frameResults;
 
+  // Extract frames from video - defined before early return to satisfy React Hooks rules
+  const extractFrames = useCallback(async () => {
+    if (!videoRef.current || actualFileType !== 'video') {
+      console.log('extractFrames: No video ref or not video type');
+      return;
+    }
+    
+    console.log('extractFrames: Starting extraction, filteredFrames.length:', filteredFrames.length);
+    setIsExtractingFrames(true);
+    const frames = [];
+    const video = videoRef.current;
+    const canvas = frameCanvasRef.current;
+    
+    if (!canvas) {
+      console.log('extractFrames: No canvas ref');
+      setIsExtractingFrames(false);
+      return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    // Extract frames based on filteredFrames (suspicious frames when filter is on)
+    const framesToExtract = filteredFrames.slice(0, 20); // Limit to 20 frames for performance
+    console.log('extractFrames: Extracting', framesToExtract.length, 'frames');
+    
+    try {
+      for (let i = 0; i < framesToExtract.length; i++) {
+        const frame = framesToExtract[i];
+        if (frame && frame.timestamp !== undefined) {
+          console.log(`extractFrames: Processing frame ${i}, timestamp: ${frame.timestamp}`);
+          video.currentTime = frame.timestamp;
+          
+          await new Promise(resolve => {
+            video.addEventListener('seeked', resolve, { once: true });
+          });
+          
+          // Draw frame to canvas
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Convert to data URL
+          const frameDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          
+          frames.push({
+            ...frame,
+            imageData: frameDataUrl,
+            index: i
+          });
+        }
+      }
+      
+      console.log('extractFrames: Extracted', frames.length, 'frames');
+      setExtractedFrames(frames);
+    } catch (error) {
+      console.error('Error extracting frames:', error);
+    } finally {
+      setIsExtractingFrames(false);
+    }
+  }, [actualFileType, filteredFrames]);
+
   // Effect to extract frames when video loads or filter changes
   useEffect(() => {
     if (actualFileType === 'video' && filteredFrames.length > 0) {
@@ -574,66 +634,6 @@ const VisualEvidence = ({
     
     return reasons.length > 0 ? reasons : ['No specific issues detected'];
   };
-
-  // Extract frames from video
-  const extractFrames = useCallback(async () => {
-    if (!videoRef.current || actualFileType !== 'video') {
-      console.log('extractFrames: No video ref or not video type');
-      return;
-    }
-    
-    console.log('extractFrames: Starting extraction, filteredFrames.length:', filteredFrames.length);
-    setIsExtractingFrames(true);
-    const frames = [];
-    const video = videoRef.current;
-    const canvas = frameCanvasRef.current;
-    
-    if (!canvas) {
-      console.log('extractFrames: No canvas ref');
-      setIsExtractingFrames(false);
-      return;
-    }
-    
-    const ctx = canvas.getContext('2d');
-    // Extract frames based on filteredFrames (suspicious frames when filter is on)
-    const framesToExtract = filteredFrames.slice(0, 20); // Limit to 20 frames for performance
-    console.log('extractFrames: Extracting', framesToExtract.length, 'frames');
-    
-    try {
-      for (let i = 0; i < framesToExtract.length; i++) {
-        const frame = framesToExtract[i];
-        if (frame && frame.timestamp !== undefined) {
-          console.log(`extractFrames: Processing frame ${i}, timestamp: ${frame.timestamp}`);
-          video.currentTime = frame.timestamp;
-          
-          await new Promise(resolve => {
-            video.addEventListener('seeked', resolve, { once: true });
-          });
-          
-          // Draw frame to canvas
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          
-          // Convert to data URL
-          const frameDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-          
-          frames.push({
-            ...frame,
-            imageData: frameDataUrl,
-            index: i
-          });
-        }
-      }
-      
-      console.log('extractFrames: Extracted', frames.length, 'frames');
-      setExtractedFrames(frames);
-    } catch (error) {
-      console.error('Error extracting frames:', error);
-    } finally {
-      setIsExtractingFrames(false);
-    }
-  }, [actualFileType, filteredFrames]);
 
   const normalizePercentageValue = (value) => {
     if (value === undefined || value === null || Number.isNaN(value)) {
@@ -1832,24 +1832,10 @@ const VisualEvidence = ({
                 if (imageRef.current) {
                   setImageLoaded(true);
                   // Calculate overlay positions when image loads
+                  // Overlay positioning removed - not used
                   const img = imageRef.current;
-                  if (img.naturalWidth && img.naturalHeight) {
-                    const container = img.parentElement;
-                    if (container) {
-                      const containerRect = container.getBoundingClientRect();
-                      const scaleX = containerRect.width / img.naturalWidth;
-                      const scaleY = containerRect.height / img.naturalHeight;
-                      const scale = Math.min(scaleX, scaleY);
-                      const offsetX = (containerRect.width - img.naturalWidth * scale) / 2;
-                      const offsetY = (containerRect.height - img.naturalHeight * scale) / 2;
-                      setOverlayPositions({
-                        scale,
-                        offsetX,
-                        offsetY,
-                        imageWidth: img.naturalWidth,
-                        imageHeight: img.naturalHeight
-                      });
-                    }
+                  if (img && img.naturalWidth && img.naturalHeight) {
+                    // Image loaded, but overlay positions not needed
                   }
                 }
               }}
