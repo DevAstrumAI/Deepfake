@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Eye, 
   ZoomIn, 
   ZoomOut, 
   RotateCcw, 
-  Download,
   AlertTriangle,
   CheckCircle,
   XCircle,
@@ -13,16 +12,9 @@ import {
   Target,
   Layers,
   Activity,
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Clock,
   Filter,
   ChevronLeft,
-  ChevronRight,
-  EyeOff,
-  Zap
+  ChevronRight
 } from 'lucide-react';
 
 const getDefaultOverlay = (type) => {
@@ -83,8 +75,6 @@ const VisualEvidence = ({
   const [isExtractingFrames, setIsExtractingFrames] = useState(false);
   const [selectedHeatmapIndex, setSelectedHeatmapIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [overlayPositions, setOverlayPositions] = useState(null);
-  const canvasRef = useRef(null);
   const imageRef = useRef(null);
   const videoRef = useRef(null);
   const frameCanvasRef = useRef(null);
@@ -115,7 +105,7 @@ const VisualEvidence = ({
       
       return () => clearTimeout(timer);
     }
-  }, [actualFileType, filteredFrames.length]);
+  }, [actualFileType, filteredFrames.length, extractFrames]);
 
   // Effect to update current frame when index changes
   useEffect(() => {
@@ -551,15 +541,6 @@ const VisualEvidence = ({
     }
   };
 
-  const seekToFrame = (frameNumber) => {
-    if (videoRef.current && frameResults.length > 0) {
-      const frame = frameResults.find(f => f.frame_number === frameNumber);
-      if (frame) {
-        videoRef.current.currentTime = frame.timestamp || 0;
-      }
-    }
-  };
-
   const getSuspiciousReasons = (frame) => {
     const reasons = [];
     
@@ -595,7 +576,7 @@ const VisualEvidence = ({
   };
 
   // Extract frames from video
-  const extractFrames = async () => {
+  const extractFrames = useCallback(async () => {
     if (!videoRef.current || actualFileType !== 'video') {
       console.log('extractFrames: No video ref or not video type');
       return;
@@ -652,7 +633,7 @@ const VisualEvidence = ({
     } finally {
       setIsExtractingFrames(false);
     }
-  };
+  }, [actualFileType, filteredFrames]);
 
   const getFileExtension = (filename) => {
     if (!filename) return actualFileType === 'image' ? '.jpg' : '.wav';
