@@ -51,8 +51,6 @@ const AudioAnalysis = ({ analysisResult, className = "" }) => {
     { name: 'Fake', value: modelData.filter(m => m.prediction === 'FAKE').length, color: '#EF4444' }
   ];
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

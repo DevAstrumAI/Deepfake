@@ -8,8 +8,6 @@ import {
   BarChart3, 
   BookOpen, 
   Zap, 
-  CheckCircle, 
-  AlertTriangle,
   TrendingUp,
   Users,
   Clock,

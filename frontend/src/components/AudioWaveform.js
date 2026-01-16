@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 
 const AudioWaveform = ({ audioUrl, className = "", height = 100 }) => {
   const canvasRef = useRef(null);
-  const audioRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [waveformData, setWaveformData] = useState(null);

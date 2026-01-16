@@ -9,7 +9,6 @@ import {
   Zap,
   CheckCircle,
   XCircle,
-  Info,
   Lightbulb,
   Target,
   Users
@@ -18,7 +17,6 @@ import { useAnalysis } from '../context/AnalysisContext';
 
 const Educational = () => {
   const { api } = useAnalysis();
-  const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

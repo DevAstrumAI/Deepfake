@@ -80,7 +80,7 @@ const VisualEvidence = ({
   const frameCanvasRef = useRef(null);
   
   // API paths for secure asset loading
-  const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
   const baseFileUrl = fileId ? `${apiBaseUrl}/uploads/${fileId}` : null;
   const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const secureFileUrl = baseFileUrl
@@ -635,12 +635,6 @@ const VisualEvidence = ({
     }
   }, [actualFileType, filteredFrames]);
 
-  const getFileExtension = (filename) => {
-    if (!filename) return actualFileType === 'image' ? '.jpg' : '.wav';
-    const lastDot = filename.lastIndexOf('.');
-    return lastDot !== -1 ? filename.substring(lastDot) : '.jpg';
-  };
-
   const normalizePercentageValue = (value) => {
     if (value === undefined || value === null || Number.isNaN(value)) {
       return 0;
@@ -779,7 +773,6 @@ const VisualEvidence = ({
     const naturalHeight = img.naturalHeight;
     
     // Get the actual displayed image dimensions (accounting for object-contain)
-    const imgRect = img.getBoundingClientRect();
     const container = img.parentElement;
     if (!container) return null;
     const containerRect = container.getBoundingClientRect();
@@ -1416,7 +1409,6 @@ const VisualEvidence = ({
     
     // Filter Grad-CAM heatmaps
     const gradcamHeatmaps = safeVisualEvidence.heatmaps.filter(h => h.type === 'gradcam' && h.image_data);
-    const otherHeatmaps = safeVisualEvidence.heatmaps.filter(h => h.type !== 'gradcam' || !h.image_data);
     
     // Use selected heatmap or first available
     const displayHeatmap = gradcamHeatmaps.length > 0 

@@ -1232,7 +1232,6 @@ const Results = () => {
     if (!result || !result.frame_analysis) return null;
 
     const frameAnalysis = result.frame_analysis;
-    const videoScore = result.video_score || {};
 
     // Prepare frame data for charts
     const frameData = frameAnalysis.frame_results?.map((frame, index) => ({
@@ -1443,7 +1442,7 @@ const Results = () => {
 
     // Handle audio analysis charts
     if (result.type === 'audio') {
-      const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+      const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
       const baseAudioUrl = `${apiBaseUrl}/uploads/${fileId}${getFileExtension(result.filename)}`;
       const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
       const secureAudioUrl = authToken ? `${baseAudioUrl}?token=${encodeURIComponent(authToken)}` : baseAudioUrl;

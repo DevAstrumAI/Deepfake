@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from './AuthContext';
 
-// API base URL - use relative URLs when proxy is configured
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+// API base URL - use production backend URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
 
 // Initial state
 const initialState = {
