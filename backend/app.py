@@ -84,8 +84,13 @@ allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
 if allowed_origins_env:
     allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")]
 else:
-    # Default origins for local development
-    allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    # Default origins: local development + Vercel frontend
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://deepfake-theta.vercel.app",
+        "https://*.vercel.app"  # Allow all Vercel preview deployments
+    ]
 
 app.add_middleware(
     CORSMiddleware,
