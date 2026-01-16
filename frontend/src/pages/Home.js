@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-// Authentication removed
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield, 
@@ -15,8 +14,6 @@ import {
 } from 'lucide-react';
 
 const Home = () => {
-  const navigate = useNavigate();
-  
   const handleStartAnalysis = (e) => {
     // No auth needed - can proceed directly
   };
