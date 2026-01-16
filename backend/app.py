@@ -463,16 +463,7 @@ SUPPORTED_AUDIO_FORMATS = {'.wav', '.mp3', '.flac', '.aac', '.ogg'}
 # Authentication helper functions are defined above (lines 126-151)
 # These are kept for backward compatibility but the actual functions use bcrypt directly
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """Create JWT access token"""
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+# create_access_token removed - authentication no longer needed
 
 def get_user_by_username(username: str) -> Optional[Dict]:
     """Get user by username from database"""
@@ -578,20 +569,7 @@ def create_user(username: str, email: str, password: str) -> Optional[Dict]:
 
 # Authentication functions removed - app is now public
 
-# Pydantic models
-class UserSignup(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
-
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user: Dict
+# Auth Pydantic models removed - authentication no longer needed
 
 class AnalysisRequest(BaseModel):
     file_id: str
