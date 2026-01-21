@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-import { Info, Shield, Activity, Search, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Info, Shield, Activity, Search, AlertTriangle, CheckCircle, MapPin, BarChart3 } from 'lucide-react';
 
 function ForensicAnalysis({ details }) {
 	if (!details?.face_features?.forensic_analysis) return null;
@@ -10,7 +10,7 @@ function ForensicAnalysis({ details }) {
 		<div className='bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full'>
 			{/* Header */}
 			<div className='flex items-center gap-3 mb-8'>
-				<div className='bg-indigo-500 p-2 rounded-lg'>
+				<div className='bg-gradient-to-br from-purple-600 to-purple-700 p-2 rounded-lg'>
 					<Shield className='w-6 h-6 text-white' />
 				</div>
 				<h3 className='text-xl font-bold text-gray-800'>
@@ -25,7 +25,7 @@ function ForensicAnalysis({ details }) {
 							return (
 								<div key={key} className='bg-slate-50 rounded-xl p-5 border border-slate-100'>
 									<div className='flex items-center gap-2 mb-4'>
-										<Activity className='w-4 h-4 text-indigo-500' />
+										<Activity className='w-4 h-4 text-purple-600' />
 										<h4 className='font-bold text-gray-700 capitalize'>
 											{key.replace(/_/g, ' ')}
 										</h4>
@@ -54,8 +54,8 @@ function ForensicAnalysis({ details }) {
 											if (isFaceRegion && isCoordinate) {
 												// Face coordinates: just show value, no status
 												displayValue = `${subValue.toFixed(0)} px`;
-												statusText = '📍 Location';
-												statusClass = 'text-blue-600';
+												statusText = 'Location';
+												statusClass = 'text-purple-600';
 												description =
 													subKey === 'top'
 														? 'Distance from top of image'
@@ -70,7 +70,7 @@ function ForensicAnalysis({ details }) {
 														: 'Face height in pixels';
 											} else if (typeof subValue === 'boolean') {
 												// Boolean values: show clear status
-												statusText = subValue ? '⚠️ Issue Found' : '✅ OK';
+												statusText = subValue ? 'Issue Found' : 'OK';
 												statusClass = subValue
 													? 'text-red-600 font-semibold'
 													: 'text-green-600';
@@ -103,7 +103,7 @@ function ForensicAnalysis({ details }) {
 													// Spectral entropy is a raw entropy value (typically >4.0), NOT a percentage
 													displayValue = subValue.toFixed(2);
 													statusText =
-														subValue < 4.0 ? '⚠️ Suspicious' : '✅ Good';
+														subValue < 4.0 ? 'Suspicious' : 'Good';
 													statusClass =
 														subValue < 4.0
 															? 'text-red-600'
@@ -115,10 +115,10 @@ function ForensicAnalysis({ details }) {
 													displayValue = `${(subValue * 100).toFixed(1)}%`;
 													statusText =
 														subValue < 0.5
-															? '⚠️ Low'
+															? 'Low'
 															: subValue < 0.7
-															? '⚠️ Moderate'
-															: '✅ Good';
+															? 'Moderate'
+															: 'Good';
 													statusClass =
 														subValue < 0.5
 															? 'text-red-600'
@@ -155,13 +155,13 @@ function ForensicAnalysis({ details }) {
 													// 3.0-10.0 = natural
 													// > 10.0 = poor image quality
 													if (subValue < 3.0) {
-														statusText = '⚠️ Too Smooth';
+														statusText = 'Too Smooth';
 														statusClass = 'text-red-600';
 													} else if (subValue <= 10.0) {
-														statusText = '✅ Natural';
+														statusText = 'Natural';
 														statusClass = 'text-green-600';
 													} else {
-														statusText = '⚠️ Poor Quality';
+														statusText = 'Poor Quality';
 														statusClass = 'text-yellow-600';
 													}
 													description =
@@ -170,8 +170,8 @@ function ForensicAnalysis({ details }) {
 													displayValue = subValue.toFixed(2);
 													statusText =
 														subValue > 40
-															? '⚠️ Inconsistent'
-															: '✅ Consistent';
+															? 'Inconsistent'
+															: 'Consistent';
 													statusClass =
 														subValue > 40
 															? 'text-red-600'
@@ -181,7 +181,7 @@ function ForensicAnalysis({ details }) {
 												} else if (subKey.includes('brightness_range')) {
 													displayValue = `${subValue.toFixed(0)} (0-255)`;
 													statusText =
-														subValue > 100 ? '⚠️ High Range' : '✅ Normal';
+														subValue > 100 ? 'High Range' : 'Normal';
 													statusClass =
 														subValue > 100
 															? 'text-red-600'
@@ -192,8 +192,8 @@ function ForensicAnalysis({ details }) {
 													displayValue = `${(subValue * 100).toFixed(1)}%`;
 													statusText =
 														subValue < 0.05 || subValue > 0.6
-															? '⚠️ Unnatural'
-															: '✅ Natural';
+															? 'Unnatural'
+															: 'Natural';
 													statusClass =
 														subValue < 0.05 || subValue > 0.6
 															? 'text-red-600'
@@ -204,13 +204,13 @@ function ForensicAnalysis({ details }) {
 													// Other numeric values
 													displayValue = subValue.toFixed(2);
 													statusText =
-														subValue > 0 ? '📊 Measured' : '✅ Normal';
+														subValue > 0 ? 'Measured' : 'Normal';
 													statusClass = 'text-gray-600';
 												}
 											} else {
 												// Other types: show as-is
 												displayValue = String(subValue);
-												statusText = subValue ? '⚠️ Detected' : '✅ Normal';
+												statusText = subValue ? 'Detected' : 'Normal';
 												statusClass = subValue
 													? 'text-red-600'
 													: 'text-green-600';
@@ -263,7 +263,7 @@ function ForensicAnalysis({ details }) {
 													className='bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group relative'>
 													<div className='absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10'>
 														<div className='relative'>
-															<Info className='w-4 h-4 text-gray-400 hover:text-indigo-500 cursor-help' />
+															<Info className='w-4 h-4 text-gray-400 hover:text-purple-600 cursor-help' />
 															<div className='absolute right-0 bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none'>
 																<div className='whitespace-pre-line'>
 																	{tooltipText}
@@ -291,14 +291,18 @@ function ForensicAnalysis({ details }) {
 														</div>
 														
 														<div className={`flex items-center gap-2 text-sm font-medium ${statusClass}`}>
-															{statusText.startsWith('⚠️') ? (
+															{statusText.includes('Issue') || statusText.includes('Suspicious') || statusText.includes('Low') || statusText.includes('Moderate') || statusText.includes('Too Smooth') || statusText.includes('Poor Quality') || statusText.includes('Inconsistent') || statusText.includes('High Range') || statusText.includes('Unnatural') || statusText.includes('Detected') ? (
 																<AlertTriangle className='w-4 h-4' />
-															) : statusText.startsWith('✅') ? (
+															) : statusText.includes('OK') || statusText.includes('Good') || statusText.includes('Natural') || statusText.includes('Consistent') || statusText.includes('Normal') ? (
 																<CheckCircle className='w-4 h-4' />
+															) : statusText.includes('Location') ? (
+																<MapPin className='w-4 h-4' />
+															) : statusText.includes('Measured') ? (
+																<BarChart3 className='w-4 h-4' />
 															) : (
-																<Info className='w-4 h-4' /> /* Fallback for HelpCircle if not present */
+																<Info className='w-4 h-4' />
 															)}
-															<span>{statusText.replace(/^[⚠️✅📊]\s*/, '')}</span>
+															<span>{statusText}</span>
 														</div>
 													</div>
 												</div>
@@ -313,8 +317,8 @@ function ForensicAnalysis({ details }) {
 				)}
 				
 				{/* Global Footer */}
-				<div className='bg-indigo-50 rounded-xl p-4 flex items-center gap-3 border border-indigo-100'>
-					<div className='bg-indigo-500 rounded-full p-1'>
+				<div className='bg-purple-50 rounded-xl p-4 flex items-center gap-3 border border-purple-100'>
+					<div className='bg-purple-600 rounded-full p-1'>
 						<Search className='w-5 h-5 text-white' />
 					</div>
 					<div>

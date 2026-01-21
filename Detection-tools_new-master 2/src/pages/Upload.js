@@ -42,19 +42,13 @@ const Upload = () => {
 
 			setUploadedFiles((prev) => [...prev, ...newFiles]);
 
-			// Upload files
+			// Upload files (without showing modal)
 			setIsProcessing(true);
-			setAnalysisStep('upload');
-			setCurrentFileName(newFiles[0]?.file?.name || '');
-			setShowAnalysisModal(true);
 			
 			try {
 				for (const fileData of newFiles) {
 					try {
 						const result = await api.uploadFile(fileData.file);
-						
-						// Mark upload as complete
-						setAnalysisStep('upload');
 						
 						setUploadedFiles((prev) =>
 							prev.map((f) =>
@@ -63,12 +57,6 @@ const Upload = () => {
 									: f
 							)
 						);
-						
-						// Close modal after upload completes
-						setTimeout(() => {
-							setShowAnalysisModal(false);
-							setIsProcessing(false);
-						}, 1000);
 					} catch (error) {
 						setUploadedFiles((prev) =>
 							prev.map((f) =>
@@ -77,12 +65,11 @@ const Upload = () => {
 									: f
 							)
 						);
-						setShowAnalysisModal(false);
-						setIsProcessing(false);
 					}
 				}
 			} catch (error) {
-				setShowAnalysisModal(false);
+				console.error('Upload error:', error);
+			} finally {
 				setIsProcessing(false);
 			}
 		},
@@ -113,21 +100,29 @@ const Upload = () => {
 
 	const handleAnalyze = async (fileId) => {
 		try {
+			// Find the file to get its name
+			const fileData = uploadedFiles.find((f) => f.file_id === fileId);
+			setCurrentFileName(fileData?.filename || fileData?.file?.name || '');
+			
+			// Open modal and start analysis
 			setIsProcessing(true);
-			setAnalysisStep('analyse');
+			setAnalysisStep('upload');
 			setShowAnalysisModal(true);
 			
+			// Start analysis
 			await api.startAnalysis(fileId);
 			
-			// Simulate progress through steps
-			setTimeout(() => setAnalysisStep('review'), 3000);
-			setTimeout(() => setAnalysisStep('report'), 6000);
+			// Progress through steps
+			setTimeout(() => setAnalysisStep('analyse'), 1000);
+			setTimeout(() => setAnalysisStep('review'), 4000);
+			setTimeout(() => setAnalysisStep('report'), 7000);
 			
 			// Navigate after a brief delay to show completion
 			setTimeout(() => {
 				setShowAnalysisModal(false);
+				setIsProcessing(false);
 				navigate(`/results/${fileId}`);
-			}, 8000);
+			}, 10000);
 		} catch (error) {
 			console.error('Analysis failed:', error);
 			toast.error('Failed to start analysis');

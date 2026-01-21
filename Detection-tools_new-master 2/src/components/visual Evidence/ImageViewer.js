@@ -122,7 +122,7 @@ function ImageViewer({
 
 	return (
 		<>
-			<div className='flex-1 relative overflow-hidden flex items-center justify-center min-h-96'>
+			<div className='flex-1 relative overflow-visible flex items-start justify-start p-0 m-0 min-h-0'>
 				{actualFileType === 'video' ? (
 					<>
 						<div className='relative w-full'>
@@ -179,9 +179,11 @@ function ImageViewer({
 								</div>
 								<div className='relative'>
 									<img
+										key={`frame-${selectedFrame.frame_number}-${currentFrameIndex}`}
 										src={selectedFrame.imageData}
 										alt={`Frame ${selectedFrame.frame_number}`}
 										className='w-full h-auto max-h-64 object-contain rounded border'
+										loading='eager'
 									/>
 									{/* Frame analysis overlay */}
 									<div className='absolute top-2 left-2 bg-black bg-opacity-75 text-white p-2 rounded text-sm'>
@@ -255,115 +257,137 @@ function ImageViewer({
 					</>
 				) : (
 					<div
-						className='relative inline-block max-w-full'
-						style={{ position: 'relative' }}>
-						{/* Always show the original image */}
-						<img
-							ref={imageRef}
-							src={
-								// Use base64 image from visual_evidence if available, otherwise try to fetch
-								visualEvidence?.image_data ||
-								analysisResult?.visual_evidence?.image_data ||
-								secureFileUrl ||
-								baseFileUrl
-							}
-							alt='Analysis target'
-							className='w-full h-auto max-h-96 object-contain cursor-move block'
-							draggable={false}
-							style={{
-								transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
-									pan.y / zoom
-								}px)`,
-								transformOrigin: 'center center',
-								display: 'block',
-							}}
-							onMouseDown={handleMouseDown}
-							onMouseMove={handleMouseMove}
-							onMouseUp={handleMouseUp}
-							onMouseLeave={handleMouseUp}
-							onLoad={() => {
-								console.log('Image loaded successfully');
-								if (!imageRef.current) return;
+						className='relative flex items-center justify-center p-4 m-0 w-full'
+						style={{ position: 'relative', marginBottom: 0 }}>
+						{/* Stylish Image Container with Glow Effect */}
+						<div className='relative group w-full max-w-full'>
+							{/* Glow effect behind image */}
+							<div className='absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-400/30 to-purple-400/30 rounded-3xl blur-3xl group-hover:blur-[40px] transition-all duration-500 -z-10 scale-110'></div>
+							
+							{/* Image with stylish border and shadow */}
+							<div className='relative bg-white rounded-3xl p-4 shadow-2xl border-4 border-white/80 backdrop-blur-sm'>
+								{/* Image Container - Relative positioning for overlays */}
+								<div className='relative w-full h-auto'>
+									<img
+										ref={imageRef}
+										src={
+											// Use base64 image from visual_evidence if available, otherwise try to fetch
+											visualEvidence?.image_data ||
+											analysisResult?.visual_evidence?.image_data ||
+											secureFileUrl ||
+											baseFileUrl
+										}
+										alt='Analysis target'
+										className='w-full h-auto max-h-[600px] object-contain cursor-move block rounded-2xl shadow-xl relative z-0'
+										draggable={false}
+										style={{
+											transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
+												pan.y / zoom
+											}px)`,
+											transformOrigin: 'center center',
+											display: 'block',
+										}}
+										onMouseDown={handleMouseDown}
+										onMouseMove={handleMouseMove}
+										onMouseUp={handleMouseUp}
+										onMouseLeave={handleMouseUp}
+										onLoad={() => {
+											console.log('Image loaded successfully');
+											if (!imageRef.current) return;
 
-								const img = imageRef.current;
-								const container = img.parentElement;
-								if (!container) return;
+											const img = imageRef.current;
+											const container = img.parentElement?.parentElement?.parentElement;
+											if (!container) return;
 
-								const containerRect = container.getBoundingClientRect();
+											const containerRect = container.getBoundingClientRect();
 
-								onImageLoad({
-									naturalWidth: img.naturalWidth,
-									naturalHeight: img.naturalHeight,
-									containerWidth: containerRect.width,
-									containerHeight: containerRect.height,
-								});
-							}}
-							onError={(e) => {
-								console.error('Image load error:', e);
-								// Try to load using fetch with auth headers as fallback
-								const token = localStorage.getItem('auth_token');
-								if (token && fileId) {
-									const fetchUrl = secureFileUrl || baseFileUrl;
-									if (fetchUrl) {
-										fetch(fetchUrl, {
-											headers: {
-												Authorization: `Bearer ${token}`,
-											},
-										})
-											.then((response) => {
-												if (response.ok) {
-													return response.blob();
+											onImageLoad({
+												naturalWidth: img.naturalWidth,
+												naturalHeight: img.naturalHeight,
+												containerWidth: containerRect.width,
+												containerHeight: containerRect.height,
+											});
+										}}
+										onError={(e) => {
+											console.error('Image load error:', e);
+											// Try to load using fetch with auth headers as fallback
+											const token = localStorage.getItem('auth_token');
+											if (token && fileId) {
+												const fetchUrl = secureFileUrl || baseFileUrl;
+												if (fetchUrl) {
+													fetch(fetchUrl, {
+														headers: {
+															Authorization: `Bearer ${token}`,
+														},
+													})
+														.then((response) => {
+															if (response.ok) {
+																return response.blob();
+															}
+															throw new Error('Failed to load image');
+														})
+														.then((blob) => {
+															const url = URL.createObjectURL(blob);
+															if (imageRef.current) {
+																imageRef.current.src = url;
+															}
+														})
+														.catch((err) => {
+															console.error('Failed to load image with auth:', err);
+															e.target.style.display = 'none';
+															if (e.target.nextSibling) {
+																e.target.nextSibling.style.display = 'flex';
+															}
+														});
+												} else {
+													e.target.style.display = 'none';
+													if (e.target.nextSibling) {
+														e.target.nextSibling.style.display = 'flex';
+													}
 												}
-												throw new Error('Failed to load image');
-											})
-											.then((blob) => {
-												const url = URL.createObjectURL(blob);
-												if (imageRef.current) {
-													imageRef.current.src = url;
-												}
-											})
-											.catch((err) => {
-												console.error('Failed to load image with auth:', err);
+											} else {
 												e.target.style.display = 'none';
 												if (e.target.nextSibling) {
 													e.target.nextSibling.style.display = 'flex';
 												}
-											});
-									} else {
-										e.target.style.display = 'none';
-										if (e.target.nextSibling) {
-											e.target.nextSibling.style.display = 'flex';
-										}
-									}
-								} else {
-									e.target.style.display = 'none';
-									if (e.target.nextSibling) {
-										e.target.nextSibling.style.display = 'flex';
-									}
-								}
-							}}
-						/>
-						{/* Heatmap overlay - only when heatmaps tab is selected */}
-						{selectedOverlay === 'heatmaps' &&
-							displayHeatmap &&
-							displayHeatmap.image_data && (
-								<img
-									src={displayHeatmap.image_data}
-									alt='Grad-CAM Heatmap Overlay'
-									className='absolute top-0 left-0 w-full h-full object-contain pointer-events-none'
-									style={{
-										mixBlendMode: 'multiply',
-										opacity: 0.65,
-										zIndex: 5,
-									}}
-								/>
-							)}
-						{/* Overlay container for face detection, artifacts, etc. */}
-						{/* Position overlay absolutely relative to the image container */}
-						<div
-							className='absolute inset-0 pointer-events-none'
-							style={{ zIndex: 10 }}>
-							{renderOverlay()}
+											}
+										}}
+									/>
+									
+									{/* Heatmap overlay - positioned exactly over the image */}
+									{selectedOverlay === 'heatmaps' &&
+										displayHeatmap &&
+										displayHeatmap.image_data && (
+											<img
+												src={displayHeatmap.image_data}
+												alt='Grad-CAM Heatmap Overlay'
+												className='absolute top-0 left-0 w-full h-full object-contain pointer-events-none rounded-2xl'
+												style={{
+													mixBlendMode: 'multiply',
+													opacity: 0.7,
+													zIndex: 2,
+													transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
+														pan.y / zoom
+													}px)`,
+													transformOrigin: 'center center',
+												}}
+											/>
+										)}
+									
+									{/* Overlay container for face detection, artifacts, etc. - Above heatmap */}
+									<div
+										className='absolute top-0 left-0 w-full h-full pointer-events-none'
+										style={{ 
+											zIndex: 20,
+											transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
+												pan.y / zoom
+											}px)`,
+											transformOrigin: 'center center',
+										}}>
+										{renderOverlay()}
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				)}

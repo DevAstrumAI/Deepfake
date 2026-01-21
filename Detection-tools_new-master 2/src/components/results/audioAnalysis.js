@@ -1,6 +1,25 @@
 /** @format */
 
 import React from 'react';
+import {
+	Volume2,
+	BarChart3,
+	Clock,
+	Music,
+	Zap,
+	TrendingUp,
+	Lightbulb,
+	AlertTriangle,
+	AlertCircle,
+	Sliders,
+	Waves,
+	Activity,
+	Mic,
+	Microscope,
+	Settings,
+	RefreshCw,
+	XCircle,
+} from 'lucide-react';
 
 function AudioDetailedAnalysis({ result }) {
 	if (!result || !result.details) return null;
@@ -11,13 +30,16 @@ function AudioDetailedAnalysis({ result }) {
 	const preprocessingInfo = details.preprocessing_info || {};
 
 	return (
-		<div className='w-full p-4 sm:p-6 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen'>
+		<div className='w-full p-4 sm:p-6 bg-gradient-to-br from-slate-50 to-purple-50 min-h-screen'>
 			<div className='space-y-8'>
 				{/* Header Section */}
 				<div className='text-center mb-12'>
-					<h2 className='text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4'>
-						🔊 Audio Analysis Details
-					</h2>
+					<div className='flex items-center justify-center gap-3 mb-4'>
+						<Volume2 className='w-10 h-10 text-purple-600' />
+						<h2 className='text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent'>
+							Audio Analysis Details
+						</h2>
+					</div>
 					<p className='text-lg text-gray-600 max-w-2xl mx-auto'>
 						Comprehensive analysis of audio characteristics and deepfake detection results
 					</p>
@@ -25,47 +47,47 @@ function AudioDetailedAnalysis({ result }) {
 
 				{/* Audio Overview */}
 				<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-					<div className='bg-gradient-to-r from-blue-500 to-blue-600 p-6'>
+					<div className='bg-gradient-to-r from-purple-600 to-purple-700 p-6'>
 						<h3 className='text-xl font-bold text-white flex items-center'>
-							<span className='text-2xl mr-3'>📊</span>
+							<BarChart3 className='w-6 h-6 mr-3' />
 							Audio Overview
 						</h3>
 					</div>
 					<div className='p-6'>
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-							<div className='bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-200'>
+							<div className='bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200'>
 								<div className='flex items-center mb-2'>
-									<span className='text-blue-500 text-xl mr-2'>⏱️</span>
-									<div className='text-sm font-medium text-blue-700'>Duration</div>
+									<Clock className='w-5 h-5 text-purple-600 mr-2' />
+									<div className='text-sm font-medium text-purple-700'>Duration</div>
 								</div>
-								<div className='text-2xl font-bold text-blue-900'>
+								<div className='text-2xl font-bold text-purple-900'>
 									{preprocessingInfo.duration?.toFixed(1) || 'N/A'}s
 								</div>
 							</div>
-							<div className='bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200'>
+							<div className='bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200'>
 								<div className='flex items-center mb-2'>
-									<span className='text-purple-500 text-xl mr-2'>🎵</span>
+									<Music className='w-5 h-5 text-purple-600 mr-2' />
 									<div className='text-sm font-medium text-purple-700'>Sample Rate</div>
 								</div>
 								<div className='text-2xl font-bold text-purple-900'>
 									{preprocessingInfo.sample_rate || 'N/A'} Hz
 								</div>
 							</div>
-							<div className='bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200 hover:shadow-md transition-all duration-200'>
+							<div className='bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200'>
 								<div className='flex items-center mb-2'>
-									<span className='text-green-500 text-xl mr-2'>⚡</span>
-									<div className='text-sm font-medium text-green-700'>Energy</div>
+									<Zap className='w-5 h-5 text-purple-600 mr-2' />
+									<div className='text-sm font-medium text-purple-700'>Energy</div>
 								</div>
-								<div className='text-2xl font-bold text-green-900'>
+								<div className='text-2xl font-bold text-purple-900'>
 									{comprehensiveFeatures.energy_mean?.toFixed(3) || 'N/A'}
 								</div>
 							</div>
-							<div className='bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-xl border border-orange-200 hover:shadow-md transition-all duration-200'>
+							<div className='bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border border-purple-200 hover:shadow-md transition-all duration-200'>
 								<div className='flex items-center mb-2'>
-									<span className='text-orange-500 text-xl mr-2'>📈</span>
-									<div className='text-sm font-medium text-orange-700'>Zero Crossing Rate</div>
+									<TrendingUp className='w-5 h-5 text-purple-600 mr-2' />
+									<div className='text-sm font-medium text-purple-700'>Zero Crossing Rate</div>
 								</div>
-								<div className='text-2xl font-bold text-orange-900'>
+								<div className='text-2xl font-bold text-purple-900'>
 									{comprehensiveFeatures.zcr_mean?.toFixed(3) || 'N/A'}
 								</div>
 							</div>
@@ -78,7 +100,7 @@ function AudioDetailedAnalysis({ result }) {
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
 						<div className='bg-gradient-to-r from-purple-500 to-purple-600 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>💡</span>
+								<Lightbulb className='w-6 h-6 mr-3' />
 								AI Explanation
 							</h3>
 						</div>
@@ -100,7 +122,7 @@ function AudioDetailedAnalysis({ result }) {
 													<div
 														key={index}
 														className='bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2'>
-														<span className='text-red-500 text-sm'>⚠️</span>
+														<AlertTriangle className='w-4 h-4 text-red-500 mt-0.5 flex-shrink-0' />
 														<span className='text-sm text-red-700'>{indicator}</span>
 													</div>
 												)
@@ -115,12 +137,12 @@ function AudioDetailedAnalysis({ result }) {
 				{/* Deepfake Indicators */}
 				{Object.keys(deepfakeIndicators).length > 0 && (
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-						<div className='bg-gradient-to-r from-red-500 to-orange-600 p-6'>
+						<div className='bg-gradient-to-r from-purple-600 to-purple-700 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>⚠️</span>
+								<AlertTriangle className='w-6 h-6 mr-3' />
 								Deepfake Indicators
 							</h3>
-							<p className='text-red-100 text-sm mt-2'>
+							<p className='text-purple-100 text-sm mt-2'>
 								Analysis of potential synthetic audio characteristics
 							</p>
 						</div>
@@ -141,12 +163,12 @@ function AudioDetailedAnalysis({ result }) {
 											: severity === 'medium'
 											? 'bg-yellow-500'
 											: 'bg-green-500';
-									const severityIcon =
+									const SeverityIcon =
 										severity === 'high'
-											? '🔴'
+											? XCircle
 											: severity === 'medium'
-											? '🟡'
-											: '🟢';
+											? AlertCircle
+											: AlertCircle;
 									const severityLabel =
 										severity === 'high'
 											? 'High Risk'
@@ -174,17 +196,23 @@ function AudioDetailedAnalysis({ result }) {
 											<div className='flex items-start justify-between mb-3'>
 												<div className='flex-1'>
 													<div className='flex items-center mb-2'>
-														<span className='text-2xl mr-3'>{severityIcon}</span>
+														<SeverityIcon className={`w-5 h-5 mr-3 ${
+															severity === 'high'
+																? 'text-purple-600'
+																: severity === 'medium'
+																? 'text-purple-500'
+																: 'text-gray-400'
+														}`} />
 														<div>
 															<div className='font-bold text-gray-900 text-lg capitalize'>
 																{indicator.replace(/_/g, ' ')}
 															</div>
 															<div className={`text-sm font-semibold px-2 py-1 rounded-full inline-block ${
 																severity === 'high'
-																	? 'bg-red-100 text-red-700'
+																	? 'bg-purple-100 text-purple-700'
 																	: severity === 'medium'
-																	? 'bg-yellow-100 text-yellow-700'
-																	: 'bg-green-100 text-green-700'
+																	? 'bg-purple-50 text-purple-600'
+																	: 'bg-gray-100 text-gray-600'
 															}`}>
 																{severityLabel}
 															</div>
@@ -217,12 +245,12 @@ function AudioDetailedAnalysis({ result }) {
 				{/* Comprehensive Audio Features */}
 				{Object.keys(comprehensiveFeatures).length > 0 && (
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-						<div className='bg-gradient-to-r from-emerald-500 to-teal-600 p-6'>
+						<div className='bg-gradient-to-r from-purple-600 to-purple-700 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>🎛️</span>
+								<Sliders className='w-6 h-6 mr-3' />
 								Audio Characteristics
 							</h3>
-							<p className='text-emerald-100 text-sm mt-2'>
+							<p className='text-purple-100 text-sm mt-2'>
 								Detailed acoustic and spectral analysis
 							</p>
 						</div>
@@ -230,9 +258,9 @@ function AudioDetailedAnalysis({ result }) {
 							<div className='space-y-8'>
 								{/* Pitch Features */}
 								{comprehensiveFeatures.f0_mean !== undefined && (
-									<div className='bg-gradient-to-r from-violet-50 to-purple-50 p-6 rounded-xl border border-violet-200'>
-										<h4 className='text-lg font-bold text-violet-900 mb-4 flex items-center'>
-											<span className='text-xl mr-2'>🎵</span>
+									<div className='bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl border border-purple-200'>
+										<h4 className='text-lg font-bold text-purple-900 mb-4 flex items-center'>
+											<Music className='w-5 h-5 mr-2 text-purple-600' />
 											Pitch Analysis
 										</h4>
 										<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -256,21 +284,21 @@ function AudioDetailedAnalysis({ result }) {
 
 								{/* Spectral Features */}
 								{comprehensiveFeatures.spectral_centroid_mean !== undefined && (
-									<div className='bg-gradient-to-r from-cyan-50 to-blue-50 p-6 rounded-xl border border-cyan-200'>
-										<h4 className='text-lg font-bold text-cyan-900 mb-4 flex items-center'>
-											<span className='text-xl mr-2'>🌊</span>
+									<div className='bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl border border-purple-200'>
+										<h4 className='text-lg font-bold text-purple-900 mb-4 flex items-center'>
+											<Waves className='w-5 h-5 mr-2 text-purple-600' />
 											Spectral Analysis
 										</h4>
 										<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-											<div className='bg-white p-4 rounded-lg border border-cyan-300 hover:shadow-md transition-all duration-200'>
-												<div className='text-sm font-medium text-cyan-700 mb-1'>Spectral Centroid</div>
-												<div className='text-2xl font-bold text-cyan-900'>
+											<div className='bg-white p-4 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+												<div className='text-sm font-medium text-purple-700 mb-1'>Spectral Centroid</div>
+												<div className='text-2xl font-bold text-purple-900'>
 													{comprehensiveFeatures.spectral_centroid_mean?.toFixed(0) || 'N/A'} Hz
 												</div>
 											</div>
-											<div className='bg-white p-4 rounded-lg border border-cyan-300 hover:shadow-md transition-all duration-200'>
-												<div className='text-sm font-medium text-cyan-700 mb-1'>Spectral Variation</div>
-												<div className='text-2xl font-bold text-cyan-900'>
+											<div className='bg-white p-4 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+												<div className='text-sm font-medium text-purple-700 mb-1'>Spectral Variation</div>
+												<div className='text-2xl font-bold text-purple-900'>
 													{comprehensiveFeatures.spectral_centroid_std?.toFixed(0) || 'N/A'} Hz
 												</div>
 											</div>
@@ -280,21 +308,21 @@ function AudioDetailedAnalysis({ result }) {
 
 								{/* Energy Features */}
 								{comprehensiveFeatures.energy_mean !== undefined && (
-									<div className='bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200'>
-										<h4 className='text-lg font-bold text-amber-900 mb-4 flex items-center'>
-											<span className='text-xl mr-2'>⚡</span>
+									<div className='bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl border border-purple-200'>
+										<h4 className='text-lg font-bold text-purple-900 mb-4 flex items-center'>
+											<Zap className='w-5 h-5 mr-2 text-purple-600' />
 											Energy Analysis
 										</h4>
 										<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-											<div className='bg-white p-4 rounded-lg border border-amber-300 hover:shadow-md transition-all duration-200'>
-												<div className='text-sm font-medium text-amber-700 mb-1'>RMS Energy</div>
-												<div className='text-2xl font-bold text-amber-900'>
+											<div className='bg-white p-4 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+												<div className='text-sm font-medium text-purple-700 mb-1'>RMS Energy</div>
+												<div className='text-2xl font-bold text-purple-900'>
 													{comprehensiveFeatures.energy_mean?.toFixed(3) || 'N/A'}
 												</div>
 											</div>
-											<div className='bg-white p-4 rounded-lg border border-amber-300 hover:shadow-md transition-all duration-200'>
-												<div className='text-sm font-medium text-amber-700 mb-1'>Energy Variation</div>
-												<div className='text-2xl font-bold text-amber-900'>
+											<div className='bg-white p-4 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+												<div className='text-sm font-medium text-purple-700 mb-1'>Energy Variation</div>
+												<div className='text-2xl font-bold text-purple-900'>
 													{comprehensiveFeatures.energy_std?.toFixed(3) || 'N/A'}
 												</div>
 											</div>
@@ -304,12 +332,12 @@ function AudioDetailedAnalysis({ result }) {
 
 								{/* MFCC Features */}
 								{comprehensiveFeatures.mfcc_mean && (
-									<div className='bg-gradient-to-r from-rose-50 to-pink-50 p-6 rounded-xl border border-rose-200'>
-										<h4 className='text-lg font-bold text-rose-900 mb-4 flex items-center'>
-											<span className='text-xl mr-2'>🎭</span>
+									<div className='bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl border border-purple-200'>
+										<h4 className='text-lg font-bold text-purple-900 mb-4 flex items-center'>
+											<Activity className='w-5 h-5 mr-2 text-purple-600' />
 											MFCC Features (Speech Characteristics)
 										</h4>
-										<div className='text-sm text-rose-700 mb-4'>
+										<div className='text-sm text-purple-700 mb-4'>
 											{comprehensiveFeatures.mfcc_mean.length} features analyzed for speech pattern recognition
 										</div>
 										<div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3'>
@@ -318,11 +346,11 @@ function AudioDetailedAnalysis({ result }) {
 												.map((value, index) => (
 													<div
 														key={index}
-														className='bg-white p-3 rounded-lg border border-rose-300 text-center hover:shadow-md transition-all duration-200 hover:scale-105'>
-														<div className='text-xs font-medium text-rose-600 mb-1'>
+														className='bg-white p-3 rounded-lg border border-purple-200 text-center hover:shadow-md transition-all duration-200 hover:scale-105'>
+														<div className='text-xs font-medium text-purple-600 mb-1'>
 															MFCC {index + 1}
 														</div>
-														<div className='text-lg font-bold text-rose-900'>
+														<div className='text-lg font-bold text-purple-900'>
 															{value?.toFixed(2) || 'N/A'}
 														</div>
 													</div>
@@ -333,17 +361,17 @@ function AudioDetailedAnalysis({ result }) {
 
 								{/* Voiced Ratio */}
 								{comprehensiveFeatures.voiced_ratio !== undefined && (
-									<div className='bg-gradient-to-r from-lime-50 to-green-50 p-6 rounded-xl border border-lime-200'>
-										<h4 className='text-lg font-bold text-lime-900 mb-4 flex items-center'>
-											<span className='text-xl mr-2'>🗣️</span>
+									<div className='bg-gradient-to-r from-purple-50 to-white p-6 rounded-xl border border-purple-200'>
+										<h4 className='text-lg font-bold text-purple-900 mb-4 flex items-center'>
+											<Mic className='w-5 h-5 mr-2 text-purple-600' />
 											Voice Analysis
 										</h4>
-										<div className='bg-white p-4 rounded-lg border border-lime-300 hover:shadow-md transition-all duration-200'>
-											<div className='text-sm font-medium text-lime-700 mb-1'>Voiced Ratio</div>
-											<div className='text-2xl font-bold text-lime-900'>
+										<div className='bg-white p-4 rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+											<div className='text-sm font-medium text-purple-700 mb-1'>Voiced Ratio</div>
+											<div className='text-2xl font-bold text-purple-900'>
 												{(comprehensiveFeatures.voiced_ratio * 100)?.toFixed(1) || 'N/A'}%
 											</div>
-											<div className='text-sm text-lime-600 mt-1'>
+											<div className='text-sm text-purple-600 mt-1'>
 												Percentage of voiced segments in the audio
 											</div>
 										</div>
@@ -357,18 +385,18 @@ function AudioDetailedAnalysis({ result }) {
 				{/* Analysis Methods */}
 				{details.analysis_methods && (
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-						<div className='bg-gradient-to-r from-slate-500 to-gray-600 p-6'>
+						<div className='bg-gradient-to-r from-purple-600 to-purple-700 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>🔬</span>
+								<Microscope className='w-6 h-6 mr-3' />
 								Analysis Methods Used
 							</h3>
 						</div>
 						<div className='p-6'>
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 								{details.analysis_methods.map((method, index) => (
-									<div key={index} className='flex items-center space-x-3 p-3 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200 hover:shadow-md transition-all duration-200'>
-										<div className='w-3 h-3 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse'></div>
-										<span className='text-slate-800 font-medium'>{method}</span>
+									<div key={index} className='flex items-center space-x-3 p-3 bg-gradient-to-r from-purple-50 to-white rounded-lg border border-purple-200 hover:shadow-md transition-all duration-200'>
+										<div className='w-3 h-3 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full animate-pulse'></div>
+										<span className='text-purple-900 font-medium'>{method}</span>
 									</div>
 								))}
 							</div>
@@ -379,41 +407,41 @@ function AudioDetailedAnalysis({ result }) {
 				{/* Preprocessing Information */}
 				{details.preprocessing_info && (
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-						<div className='bg-gradient-to-r from-gray-500 to-slate-600 p-6'>
+						<div className='bg-gradient-to-r from-purple-600 to-purple-700 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>⚙️</span>
+								<Settings className='w-6 h-6 mr-3' />
 								Processing Details
 							</h3>
-							<p className='text-gray-200 text-sm mt-2'>
+							<p className='text-purple-100 text-sm mt-2'>
 								Technical parameters used in audio processing
 							</p>
 						</div>
 						<div className='p-6'>
 							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-								<div className='bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border border-gray-300 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
+								<div className='bg-gradient-to-br from-purple-50 to-white p-5 rounded-xl border border-purple-200 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
 									<div className='flex items-center mb-3'>
-										<span className='text-gray-500 text-xl mr-3'>🎚️</span>
-										<div className='text-sm font-medium text-gray-700'>Sample Rate</div>
+										<Sliders className='w-5 h-5 text-purple-600 mr-3' />
+										<div className='text-sm font-medium text-purple-700'>Sample Rate</div>
 									</div>
-									<div className='text-2xl font-bold text-gray-900'>
+									<div className='text-2xl font-bold text-purple-900'>
 										{details.preprocessing_info.sample_rate || 'N/A'} Hz
 									</div>
 								</div>
-								<div className='bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border border-gray-300 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
+								<div className='bg-gradient-to-br from-purple-50 to-white p-5 rounded-xl border border-purple-200 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
 									<div className='flex items-center mb-3'>
-										<span className='text-gray-500 text-xl mr-3'>📊</span>
-										<div className='text-sm font-medium text-gray-700'>Mel Bins</div>
+										<BarChart3 className='w-5 h-5 text-purple-600 mr-3' />
+										<div className='text-sm font-medium text-purple-700'>Mel Bins</div>
 									</div>
-									<div className='text-2xl font-bold text-gray-900'>
+									<div className='text-2xl font-bold text-purple-900'>
 										{details.preprocessing_info.n_mels || 'N/A'}
 									</div>
 								</div>
-								<div className='bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border border-gray-300 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
+								<div className='bg-gradient-to-br from-purple-50 to-white p-5 rounded-xl border border-purple-200 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1'>
 									<div className='flex items-center mb-3'>
-										<span className='text-gray-500 text-xl mr-3'>🔄</span>
-										<div className='text-sm font-medium text-gray-700'>FFT Size</div>
+										<RefreshCw className='w-5 h-5 text-purple-600 mr-3' />
+										<div className='text-sm font-medium text-purple-700'>FFT Size</div>
 									</div>
-									<div className='text-2xl font-bold text-gray-900'>
+									<div className='text-2xl font-bold text-purple-900'>
 										{details.preprocessing_info.n_fft || 'N/A'}
 									</div>
 								</div>

@@ -36,72 +36,95 @@ function EvidenceSummary({
 	return (
 		<>
 			{actualFileType === 'video' ? (
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 w-full'>
                     {/* Frame Analysis Card */}
-					<div className='bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group'>
-						<div className='flex items-center gap-3 mb-4'>
-                            <div className='bg-blue-50 p-2 rounded-lg group-hover:bg-blue-100 transition-colors'>
-							    <Target className='w-5 h-5 text-blue-600' />
+					<div className='bg-gradient-to-br from-blue-50 via-blue-100/50 to-blue-50 rounded-2xl border-2 border-blue-200 p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group min-w-0'>
+						<div className='flex items-center justify-between mb-4'>
+                            <div className='bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-md group-hover:scale-110 transition-transform'>
+							    <Target className='w-6 h-6 text-white' />
                             </div>
-							<div className='flex-1'>
-                                <div className='text-xs font-bold text-gray-500 uppercase tracking-wider'>Frame Analysis</div>
-                            </div>
-                            <div className='px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full'>
+                            <div className='px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full shadow-sm'>
                                 {safeVisualEvidence.frameAnalysis?.total_frames || 0} FRAMES
                             </div>
 						</div>
                         
                         <div>
-                            <div className='text-2xl font-bold text-gray-800 leading-tight'>
+                            <div className='text-4xl font-black text-blue-700 leading-tight mb-1'>
                                 {safeVisualEvidence.frameAnalysis?.fake_frames || 0}
                             </div>
-                            <div className='text-xs text-gray-400 mt-1 font-medium'>
+                            <div className='text-sm text-blue-800 font-semibold'>
                                 Fake Frames Detected
+                            </div>
+                            <div className='mt-2 h-2 bg-blue-200 rounded-full overflow-hidden'>
+                                <div 
+                                    className='h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500'
+                                    style={{ 
+                                        width: `${safeVisualEvidence.frameAnalysis?.total_frames 
+                                            ? (safeVisualEvidence.frameAnalysis.fake_frames / safeVisualEvidence.frameAnalysis.total_frames) * 100 
+                                            : 0}%` 
+                                    }}
+                                />
                             </div>
                         </div>
 					</div>
 
                     {/* Temporal Analysis Card */}
-					<div className='bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group'>
-						<div className='flex items-center gap-3 mb-4'>
-                            <div className='bg-amber-50 p-2 rounded-lg group-hover:bg-amber-100 transition-colors'>
-							    <Activity className='w-5 h-5 text-amber-600' />
+					<div className='bg-gradient-to-br from-amber-50 via-yellow-100/50 to-amber-50 rounded-2xl border-2 border-amber-200 p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group min-w-0'>
+						<div className='flex items-center justify-between mb-4'>
+                            <div className='bg-gradient-to-br from-amber-500 to-orange-500 p-3 rounded-xl shadow-md group-hover:scale-110 transition-transform'>
+							    <Activity className='w-6 h-6 text-white' />
                             </div>
-							<div className='flex-1'>
-                                <div className='text-xs font-bold text-gray-500 uppercase tracking-wider'>Temporal</div>
-                            </div>
-                            <div className='px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full'>
+                            <div className='px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full shadow-sm'>
                                 {formatPercentage(safeVisualEvidence.temporalAnalysis?.consistency_score || 0)}%
                             </div>
 						</div>
                         
                         <div>
-                            <div className='text-2xl font-bold text-gray-800 leading-tight'>
+                            <div className='text-4xl font-black text-amber-700 leading-tight mb-1'>
                                 {formatPercentage(safeVisualEvidence.temporalAnalysis?.motion_analysis?.average_confidence || 0)}%
                             </div>
-                            <div className='text-xs text-gray-400 mt-1 font-medium'>
+                            <div className='text-sm text-amber-800 font-semibold'>
                                 Average Confidence
+                            </div>
+                            <div className='mt-2 h-2 bg-amber-200 rounded-full overflow-hidden'>
+                                <div 
+                                    className='h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500'
+                                    style={{ 
+                                        width: `${formatPercentage(safeVisualEvidence.temporalAnalysis?.motion_analysis?.average_confidence || 0)}%` 
+                                    }}
+                                />
                             </div>
                         </div>
 					</div>
 
                     {/* Video Quality Card */}
-					<div className='bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group'>
-						<div className='flex items-center gap-3 mb-4'>
-                            <div className='bg-red-50 p-2 rounded-lg group-hover:bg-red-100 transition-colors'>
-							    <AlertTriangle className='w-5 h-5 text-red-600' />
+					<div className='bg-gradient-to-br from-red-50 via-rose-100/50 to-red-50 rounded-2xl border-2 border-red-200 p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group min-w-0'>
+						<div className='flex items-center justify-between mb-4'>
+                            <div className='bg-gradient-to-br from-red-500 to-rose-600 p-3 rounded-xl shadow-md group-hover:scale-110 transition-transform'>
+							    <Layers className='w-6 h-6 text-white' />
                             </div>
-							<div className='flex-1'>
-                                <div className='text-xs font-bold text-gray-500 uppercase tracking-wider'>Quality</div>
+                            <div className='px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm'>
+                                {safeVisualEvidence.heatmaps.length} HEATMAPS
                             </div>
 						</div>
                         
                         <div>
-                            <div className='text-2xl font-bold text-gray-800 leading-tight'>
+                            <div className='text-4xl font-black text-red-700 leading-tight mb-1'>
                                 {safeVisualEvidence.heatmaps.length}
                             </div>
-                            <div className='text-xs text-gray-400 mt-1 font-medium'>
+                            <div className='text-sm text-red-800 font-semibold'>
                                 Heatmaps Generated
+                            </div>
+                            <div className='mt-2 flex items-center gap-2'>
+                                {safeVisualEvidence.heatmaps.length > 0 ? (
+                                    <div className='flex gap-1'>
+                                        {[...Array(Math.min(safeVisualEvidence.heatmaps.length, 5))].map((_, i) => (
+                                            <div key={i} className='w-2 h-2 bg-red-500 rounded-full' />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className='text-xs text-red-600'>No heatmaps available</div>
+                                )}
                             </div>
                         </div>
 					</div>

@@ -5,12 +5,12 @@ import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const SuspiciousFramesOverlay = ({
 	actualFileType,
-	suspiciousFrames,
-	extractedFrames,
-	currentFrameIndex,
+	suspiciousFrames = [],
+	extractedFrames = [],
+	currentFrameIndex = 0,
 	handleFrameNavigation,
 }) => {
-	if (actualFileType !== 'video' || !suspiciousFrames.length) {
+	if (actualFileType !== 'video' || !suspiciousFrames || suspiciousFrames.length === 0) {
 		return (
 			<div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white'>
 				<div className='text-center'>
@@ -19,6 +19,10 @@ const SuspiciousFramesOverlay = ({
 				</div>
 			</div>
 		);
+	}
+
+	if (!extractedFrames || extractedFrames.length === 0) {
+		return null;
 	}
 
 	return (

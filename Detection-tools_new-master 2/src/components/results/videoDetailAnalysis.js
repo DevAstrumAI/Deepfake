@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import { Lightbulb } from 'lucide-react';
 
 function VideoDetailAnalysis({ result }) {
 	const formatConfidence = (confidence) => {
@@ -469,7 +470,7 @@ function VideoDetailAnalysis({ result }) {
 									{frame.details?.openai_analysis?.reasoning && (
 										<div className='mb-4'>
 											<h4 className='font-semibold text-gray-900 mb-2 flex items-center gap-2'>
-												<span className='text-purple-600'>💡</span>
+												<Lightbulb className='w-5 h-5 text-purple-600' />
 												AI Explanation
 											</h4>
 											<div className='bg-purple-50 rounded-lg p-4 border border-purple-200'>

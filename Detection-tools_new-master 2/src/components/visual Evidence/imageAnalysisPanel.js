@@ -2,7 +2,7 @@
 
 import React from 'react';
 import FaceAnalysis from '../results/faceAnalysis';
-import ModelPredictions from '../results/modelPrediction';
+import Explainability from '../results/explainability';
 import ForensicAnalysis from '../results/forensicAnalysis';
 import ImageAnalysis from './imageAnalysis'; 
 import { Scan, ShieldCheck, ShieldAlert } from 'lucide-react';
@@ -72,7 +72,7 @@ function ImageAnalysisPanel({ analysisResult, safeVisualEvidence, details }) {
             <div className='space-y-6'>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <FaceAnalysis details={details} />
-                    <ModelPredictions details={details} />
+                    <Explainability details={details} result={analysisResult} />
                 </div>
 			    <ForensicAnalysis details={details} />
             </div>

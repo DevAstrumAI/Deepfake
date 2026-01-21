@@ -31,6 +31,8 @@ const OverlayRenderer = ({
 	filteredFrames,
 	frameResults,
 	handleFrameNavigation,
+	selectedHeatmapIndex = 0,
+	suspiciousFrames = [],
 }) => {
 	if (!selectedOverlay) {
 		return null;
@@ -49,6 +51,8 @@ const OverlayRenderer = ({
 		filteredFrames,
 		frameResults,
 		handleFrameNavigation,
+		selectedHeatmapIndex,
+		suspiciousFrames,
 	};
 
 	switch (selectedOverlay) {

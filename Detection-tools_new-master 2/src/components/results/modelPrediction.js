@@ -52,7 +52,7 @@ function ModelPredictions({ details }) {
 												? 'bg-red-100 text-red-600'
 												: 'bg-green-100 text-green-600'
 										}`}>
-										{isFake ? '🚫 FAKE' : '✅ REAL'}
+										{isFake ? 'FAKE' : 'REAL'}
 									</span>
 								</div>
 

@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { formatPercentage } from '../utils/visualEvidenceUtils';
 
 const ArtifactsOverlay = ({
@@ -162,8 +163,9 @@ const ArtifactsOverlay = ({
 							borderStyle: 'solid',
 							borderColor: '#eab308',
 						}}>
-						<div className='absolute -top-12 left-0 bg-yellow-500 text-white px-4 py-2 text-sm rounded-lg font-bold shadow-2xl whitespace-nowrap z-30 border-2 border-yellow-300'>
-							⚠️ Artifact Analysis Area
+						<div className='absolute -top-12 left-0 bg-yellow-500 text-white px-4 py-2 text-sm rounded-lg font-bold shadow-2xl whitespace-nowrap z-30 border-2 border-yellow-300 flex items-center gap-2'>
+							<AlertTriangle className='w-4 h-4' />
+							Artifact Analysis Area
 						</div>
 					</div>
 				</div>

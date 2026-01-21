@@ -487,6 +487,13 @@ IMPORTANT:
             confidence_percent = confidence * 100
             
             # Prepare comprehensive details
+            # Get duration and sample_rate from audio_features or transcript
+            audio_duration = audio_features.get('duration', 0)
+            audio_sample_rate = audio_features.get('sample_rate', 16000)
+            # Use transcript duration if available (more accurate from Whisper)
+            if transcript_data.get('duration'):
+                audio_duration = transcript_data.get('duration')
+            
             details = {
                 'model_predictions': {'openai_whisper_gpt4': prediction},
                 'model_confidences': {'openai_whisper_gpt4': confidence},
@@ -494,10 +501,16 @@ IMPORTANT:
                 'audio_features': audio_features,
                 'comprehensive_features': audio_features.get('comprehensive_features', {}),
                 'deepfake_indicators': deepfake_indicators,
+                'preprocessing_info': {
+                    'duration': float(audio_duration),
+                    'sample_rate': int(audio_sample_rate),
+                    'n_mels': 128,  # Default mel bins
+                    'n_fft': 2048,  # Default FFT size
+                },
                 'transcription': {
                     'text': transcript_text,
                     'language': transcript_data.get('language', 'unknown'),
-                    'duration': transcript_data.get('duration', audio_features.get('duration', 0)),
+                    'duration': transcript_data.get('duration', audio_duration),
                     'segments': transcript_data.get('segments', [])
                 },
                 'openai_analysis': {
@@ -550,6 +563,12 @@ IMPORTANT:
             details = {
                 'error': str(e),
                 'audio_features': audio_features,
+                'preprocessing_info': {
+                    'duration': float(audio_features.get('duration', 0)),
+                    'sample_rate': int(audio_features.get('sample_rate', 16000)),
+                    'n_mels': 128,
+                    'n_fft': 2048,
+                },
                 'model_info': {
                     'models_used': [],
                     'error': f'OpenAI detection failed: {str(e)}'

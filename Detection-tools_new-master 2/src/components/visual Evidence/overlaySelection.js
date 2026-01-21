@@ -53,7 +53,7 @@ function OverlaySelection({
 
 	return (
 		<>
-			<div className='bg-gray-100/80 p-1.5 rounded-xl inline-flex flex-wrap gap-1 mb-6 border border-gray-200'>
+			<div className='bg-gradient-to-r from-gray-50 to-gray-100/50 p-1 rounded-lg inline-flex flex-wrap gap-1 border border-gray-200/50'>
 				{overlayOptions.map((option) => {
 					const Icon = option.icon;
 					const isActive = selectedOverlay === option.id;
@@ -61,12 +61,12 @@ function OverlaySelection({
 						<button
 							key={option.id}
 							onClick={() => setSelectedOverlay(option.id)}
-							className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+							className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
 								isActive
-									? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5'
-									: 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'
+									? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-md scale-105'
+									: 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
 							}`}>
-							<Icon className={`w-4 h-4 ${isActive ? 'stroke-2' : ''}`} />
+							<Icon className={`w-3.5 h-3.5 ${isActive ? 'stroke-2' : ''}`} />
 							<span>{option.label}</span>
 						</button>
 					);

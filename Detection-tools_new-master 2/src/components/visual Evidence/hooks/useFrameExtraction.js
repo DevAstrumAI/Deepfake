@@ -1,6 +1,6 @@
 /** @format */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 
 /**
  * Custom hook for extracting frames from video
@@ -74,10 +74,21 @@ export const useFrameExtraction = (
 		}
 	}, [actualFileType, filteredFrames, videoRef, frameCanvasRef, setExtractedFrames, setIsExtractingFrames]);
 
+	// Track if extraction has been done to prevent re-extraction
+	const extractionDoneRef = useRef(false);
+
 	useEffect(() => {
-		if (actualFileType === 'video' && filteredFrames.length > 0) {
+		// Reset extraction flag when file type changes or frames array is reset
+		if (actualFileType !== 'video' || filteredFrames.length === 0) {
+			extractionDoneRef.current = false;
+			return;
+		}
+
+		// Only extract once when frames are first available
+		if (!extractionDoneRef.current && filteredFrames.length > 0) {
 			const timer = setTimeout(() => {
 				extractFrames();
+				extractionDoneRef.current = true;
 			}, 1000);
 
 			return () => clearTimeout(timer);

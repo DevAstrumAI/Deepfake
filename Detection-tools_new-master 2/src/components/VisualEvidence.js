@@ -147,53 +147,61 @@ const VisualEvidence = ({
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
-			className={`space-y-6 ${className}`}>
-			{/* Header */}
-			<div className='bg-white rounded-lg shadow-lg p-6'>
-				<div className='flex items-center justify-between mb-4'>
-					<div className='flex items-center space-x-2'>
-						<Eye className='w-5 h-5 text-primary-600' />
-						<h3 className='text-lg font-semibold text-gray-900'>
+			className={`${className}`}>
+			{/* Compact Modern Header */}
+			<div className='bg-gradient-to-r from-purple-600 to-purple-700 rounded-t-xl shadow-lg p-3 mb-0'>
+				<div className='flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						<div className='bg-white/20 backdrop-blur-sm rounded-lg p-1.5'>
+							<Eye className='w-4 h-4 text-white' />
+						</div>
+						<h3 className='text-base font-bold text-white'>
 							Visual Evidence
 						</h3>
 					</div>
-					<div className='flex items-center space-x-2'>
+					<div className='flex items-center gap-1'>
 						<button
 							onClick={handleZoomOut}
-							className='p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded'
+							className='p-1.5 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-all'
 							title='Zoom Out'>
-							<ZoomOut className='w-4 h-4' />
+							<ZoomOut className='w-3.5 h-3.5' />
 						</button>
-						<span className='text-sm text-gray-600'>
+						<span className='text-xs font-semibold text-white/90 px-1.5'>
 							{Math.round(zoom * 100)}%
 						</span>
 						<button
 							onClick={handleZoomIn}
-							className='p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded'
+							className='p-1.5 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-all'
 							title='Zoom In'>
-							<ZoomIn className='w-4 h-4' />
+							<ZoomIn className='w-3.5 h-3.5' />
 						</button>
 						<button
 							onClick={handleReset}
-							className='p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded'
+							className='p-1.5 text-white/90 hover:text-white hover:bg-white/20 rounded-lg transition-all ml-1'
 							title='Reset View'>
-							<RotateCcw className='w-4 h-4' />
+							<RotateCcw className='w-3.5 h-3.5' />
 						</button>
+					</div>
 					</div>
 				</div>
 
-				{/* Overlay Selection */}
+			{/* Main Content Container */}
+			<div className='bg-white rounded-b-xl shadow-lg border border-gray-100'>
+				{/* Overlay Selection - Compact */}
+				<div className='px-3 pt-3 pb-2 border-b border-gray-100'>
 				<OverlaySelection
 					setSelectedOverlay={setSelectedOverlay}
 					selectedOverlay={selectedOverlay}
 					analysisResult={analysisResult}
 					fileType={fileType}
 				/>
+				</div>
 
-				{/* Image Viewer */}
-				<div className='relative bg-gray-100 rounded-lg overflow-hidden'>
-					<div className='flex gap-4'>
-						{/* Image Container */}
+				{/* Image Viewer - Side-by-Side Stylish Layout */}
+				<div className='relative bg-gradient-to-br from-gray-50 via-purple-50/20 to-gray-50 overflow-visible'>
+					<div className='flex flex-col lg:flex-row gap-6 p-6 items-start'>
+						{/* Image Container - Left Side */}
+						<div className='flex-1 flex justify-center items-center min-w-0'>
 						<ImageViewer
 							analysisResult={analysisResult}
 							secureFileUrl={secureFileUrl}
@@ -213,6 +221,8 @@ const VisualEvidence = ({
 									filteredFrames={filteredFrames}
 									frameResults={frameResults}
 									handleFrameNavigation={handleFrameNavigation}
+									selectedHeatmapIndex={selectedHeatmapIndex}
+									suspiciousFrames={suspiciousFrames}
 								/>
 							)}
 							extractedFrames={extractedFrames}
@@ -232,8 +242,10 @@ const VisualEvidence = ({
 							videoRef={videoRef}
 							frameCanvasRef={frameCanvasRef}
 						/>
+						</div>
 
-						{/* Side Panel for Information */}
+						{/* Side Panel for Information - Right Side */}
+						<div className='w-full lg:w-[500px] flex-shrink-0'>
 						<OverlaySelector
 							selectedOverlay={selectedOverlay}
 							safeVisualEvidence={safeVisualEvidence}
@@ -247,19 +259,22 @@ const VisualEvidence = ({
 							visualEvidence={visualEvidence}
 						/>
 					</div>
+					</div>
 				</div>
 
-				{/* Image Analysis Panel */}
+				{/* Compact Analysis Panels */}
 				{actualFileType === 'image' && (
+					<div className='px-3 pb-3 pt-2 border-t border-gray-100'>
 					<ImageAnalysisPanel
 						analysisResult={analysisResult}
 						safeVisualEvidence={safeVisualEvidence}
 						details={details}
 					/>
+					</div>
 				)}
 
-				{/* Frame Analysis Panel */}
 				{actualFileType === 'video' && frameResults.length > 0 && (
+					<div className='px-3 pb-3 pt-2 border-t border-gray-100'>
 					<VideoFrameAnaylsis
 						setFilterSuspicious={setFilterSuspicious}
 						filterSuspicious={filterSuspicious}
@@ -269,10 +284,11 @@ const VisualEvidence = ({
 						extractedFrames={extractedFrames}
 						currentFrameIndex={currentFrameIndex}
 					/>
+					</div>
 				)}
 
-				{/* Evidence Summary */}
-				<div className='mt-4 grid grid-cols-1 md:grid-cols-3 gap-4'>
+				{/* Compact Evidence Summary */}
+				<div className='px-6 pb-6 pt-4 border-t border-gray-100'>
 					<EvidenceSummary
 						analysisResult={analysisResult}
 						actualFileType={actualFileType}
@@ -280,11 +296,13 @@ const VisualEvidence = ({
 					/>
 				</div>
 
-				{/* Detailed Analysis */}
-				<div className='mt-4 space-y-3'>
-					<h4 className='font-medium text-gray-900'>Analysis Details</h4>
+				{/* Compact Detailed Analysis */}
+				<div className='px-3 pb-3 pt-2 border-t border-gray-100'>
+					<h4 className='text-sm font-semibold text-gray-900 mb-2'>Analysis Details</h4>
+					<div className='space-y-2'>
 					<FaceDetectionDetails safeVisualEvidence={safeVisualEvidence} />
 					<HeatmapDetails safeVisualEvidence={safeVisualEvidence} />
+					</div>
 				</div>
 			</div>
 		</motion.div>

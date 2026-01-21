@@ -7,7 +7,10 @@ import {
   Zap,
   Volume2,
   Clock,
-  Mic
+  Mic,
+  Microscope,
+  Theater,
+  Music
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -198,7 +201,7 @@ const AudioAnalysis = ({ analysisResult, className = "" }) => {
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
 						<div className='bg-gradient-to-r from-slate-500 to-gray-600 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>🔬</span>
+								<Microscope className='w-6 h-6 mr-3' />
 								Analysis Methods Used
 							</h3>
 						</div>
@@ -220,7 +223,7 @@ const AudioAnalysis = ({ analysisResult, className = "" }) => {
 									<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
 										<div className='bg-gradient-to-r from-rose-500 to-pink-600 p-6'>
 											<h4 className='text-lg font-bold text-white flex items-center'>
-												<span className='text-xl mr-2'>🎭</span>
+												<Theater className='w-5 h-5 mr-2' />
 												MFCC Features (Speech Characteristics)
 											</h4>
 										</div>
@@ -253,7 +256,7 @@ const AudioAnalysis = ({ analysisResult, className = "" }) => {
 									<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
 										<div className='bg-gradient-to-r from-violet-500 to-purple-600 p-6'>
 											<h4 className='text-lg font-bold text-white flex items-center'>
-												<span className='text-xl mr-2'>🎵</span>
+												<Music className='w-5 h-5 mr-2' />
 												Pitch Analysis
 											</h4>
 										</div>
