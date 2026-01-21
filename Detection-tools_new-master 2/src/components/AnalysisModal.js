@@ -72,7 +72,7 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 					{status === 'processing' && (
 						<div className='w-5 h-5 flex items-center justify-center'>
 							<div className='relative w-5 h-5'>
-								<div className='absolute inset-0 rounded-full border-2 border-blue-100'></div>
+								<div className='absolute inset-0 rounded-full border-2 border-purple-100'></div>
 								<motion.div
 									animate={{ rotate: 360 }}
 									transition={{
@@ -80,7 +80,7 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 										repeat: Infinity,
 										ease: 'linear',
 									}}
-									className='absolute inset-0 rounded-full border-2 border-transparent border-t-blue-500 border-r-purple-500'
+									className='absolute inset-0 rounded-full border-2 border-transparent border-t-purple-500 border-r-purple-400'
 								/>
 							</div>
 						</div>
@@ -153,9 +153,9 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 											<div
 												className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
 													status === 'completed'
-														? 'bg-blue-500 text-white'
+														? 'bg-purple-500 text-white'
 														: status === 'active'
-														? 'bg-blue-500 text-white ring-4 ring-blue-200'
+														? 'bg-purple-500 text-white ring-4 ring-purple-200'
 														: 'bg-gray-200 text-gray-400'
 												}`}>
 												{status === 'completed' ? (
@@ -168,7 +168,7 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 											<span
 												className={`mt-2 text-xs font-medium ${
 													status === 'active'
-														? 'text-blue-600'
+														? 'text-purple-600'
 														: status === 'completed'
 														? 'text-gray-600'
 														: 'text-gray-400'
@@ -182,7 +182,7 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 											<div
 												className={`flex-1 h-0.5 mx-2 ${
 													status === 'completed' || getStepStatus(steps[index + 1].id) === 'active'
-														? 'bg-blue-500'
+														? 'bg-purple-500'
 														: 'bg-gray-200'
 												}`}
 											/>
@@ -212,7 +212,7 @@ const AnalysisModal = ({ isOpen, onClose, currentStep = 'upload', fileName = '' 
 									style={{
 										border: '4px solid transparent',
 										borderTop: '4px solid #8b5cf6',
-										borderRight: '4px solid #3b82f6',
+										borderRight: '4px solid #a855f7',
 										clipPath: 'inset(0 0 0 0)',
 									}}
 								/>
