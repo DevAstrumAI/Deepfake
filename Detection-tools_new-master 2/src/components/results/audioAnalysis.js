@@ -3,23 +3,10 @@
 import React from 'react';
 
 function AudioDetailedAnalysis({ result }) {
-	const formatConfidence = (confidence) => {
-		// Handle both decimal (0-1) and percentage (0-100) formats
-		if (confidence <= 1) {
-			// If confidence is decimal (0-1), convert to percentage
-			return Math.round(confidence * 100);
-		} else {
-			// If confidence is already percentage (0-100), just round it
-			return Math.round(confidence);
-		}
-	};
-
 	if (!result || !result.details) return null;
 
 	const details = result.details;
 	const comprehensiveFeatures = details.comprehensive_features || {};
-	const modelPredictions = details.model_predictions || {};
-	const modelConfidences = details.model_confidences || {};
 	const deepfakeIndicators = details.deepfake_indicators || {};
 	const preprocessingInfo = details.preprocessing_info || {};
 

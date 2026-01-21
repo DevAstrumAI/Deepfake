@@ -1,9 +1,11 @@
 /** @format */
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import {
 	CheckCircle,
-	XCircle
+	XCircle,
+	AlertTriangle
 } from 'lucide-react';
 
 function OverlaySelector({
@@ -370,16 +372,31 @@ function OverlaySelector({
 					</>
 				) : selectedOverlay === 'artifacts' ? (
 					<> 
-						<h4 className='text-lg font-semibold text-gray-900 mb-4'>
-							Artifacts Analysis
-						</h4>
+						{/* Modern Header with Gradient */}
+						<div className='mb-6'>
+							<div className='bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 rounded-xl p-4 shadow-lg'>
+								<div className='flex items-center gap-3'>
+									<div className='bg-white/20 backdrop-blur-sm rounded-lg p-2'>
+										<AlertTriangle className='w-6 h-6 text-white' />
+									</div>
+									<div>
+										<h4 className='text-xl font-bold text-white'>
+											Artifacts Analysis
+										</h4>
+										<p className='text-sm text-purple-100'>
+											Detecting manipulation indicators
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
 
-						{/* Info box explaining percentages */}
-						<div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4'>
-							<div className='flex items-start'>
-								<div className='flex-shrink-0'>
+						{/* Modern Info Card */}
+						<div className='bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-200 rounded-xl p-4 mb-6 shadow-sm'>
+							<div className='flex items-start gap-3'>
+								<div className='flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-2'>
 									<svg
-										className='w-5 h-5 text-blue-600 mt-0.5'
+										className='w-5 h-5 text-white'
 										fill='none'
 										stroke='currentColor'
 										viewBox='0 0 24 24'>
@@ -391,27 +408,23 @@ function OverlaySelector({
 										/>
 									</svg>
 								</div>
-								<div className='ml-3 flex-1'>
-									<h5 className='text-sm font-semibold text-blue-900 mb-1'>
+								<div className='flex-1'>
+									<h5 className='text-sm font-bold text-gray-900 mb-2'>
 										Understanding Artifact Scores
 									</h5>
-									<div className='text-xs text-blue-800 space-y-1'>
-										<p>
-											<strong>0-100% Scale:</strong> Higher percentages indicate
-											more natural, authentic characteristics. Lower percentages
-											suggest potential manipulation or AI generation.
-										</p>
-										<p>
-											<strong>Edge Consistency:</strong> Measures how natural
-											and uniform edges are. 70-100% = smooth natural edges,
-											&lt;50% = sharp/artificial edges or grid patterns
-											(AI-generated indicator).
-										</p>
-										<p>
-											<strong>Border Quality:</strong> Measures face border
-											smoothness. Higher values indicate natural blending with
-											background.
-										</p>
+									<div className='text-xs text-gray-700 space-y-2'>
+										<div className='flex items-start gap-2'>
+											<span className='font-semibold text-indigo-600'>•</span>
+											<span><strong>0-100% Scale:</strong> Higher = more natural, Lower = potential AI generation</span>
+										</div>
+										<div className='flex items-start gap-2'>
+											<span className='font-semibold text-indigo-600'>•</span>
+											<span><strong>Edge Consistency:</strong> 70-100% = natural, &lt;50% = AI-generated patterns</span>
+										</div>
+										<div className='flex items-start gap-2'>
+											<span className='font-semibold text-indigo-600'>•</span>
+											<span><strong>Border Quality:</strong> Measures face border smoothness and blending</span>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -474,64 +487,122 @@ function OverlaySelector({
 									return 'Analysis score (higher = more natural)';
 								};
 
+								const getArtifactIcon = (type) => {
+									const typeLower = (type || '').toLowerCase();
+									if (typeLower.includes('edge')) return '⚡';
+									if (typeLower.includes('border')) return '🔲';
+									if (typeLower.includes('texture')) return '🎨';
+									return '⚠️';
+								};
+
 								if (allArtifacts.length > 0) {
 									return (
-										<div className='space-y-2'>
+										<div className='space-y-3'>
 											{allArtifacts.map((region, idx) => {
-												const score = region.score;
+												const score = region.score || 0;
+												const scorePercent = formatPercentage(score);
 												const isGood = score >= 0.7;
 												const isModerate = score >= 0.5 && score < 0.7;
-												const bgColor = isGood
-													? 'bg-green-50 border-green-200'
+												
+												// Gradient colors based on score
+												const gradientBg = isGood
+													? 'from-green-50 via-emerald-50 to-green-100'
 													: isModerate
-													? 'bg-yellow-50 border-yellow-200'
-													: 'bg-red-50 border-red-200';
+													? 'from-yellow-50 via-amber-50 to-yellow-100'
+													: 'from-red-50 via-rose-50 to-red-100';
+												
+												const gradientBorder = isGood
+													? 'border-green-300'
+													: isModerate
+													? 'border-yellow-300'
+													: 'border-red-300';
+												
+												const gradientProgress = isGood
+													? 'from-green-500 to-emerald-600'
+													: isModerate
+													? 'from-yellow-500 to-amber-600'
+													: 'from-red-500 to-rose-600';
+												
+												const badgeColor = isGood
+													? 'bg-green-500 text-white'
+													: isModerate
+													? 'bg-yellow-500 text-white'
+													: 'bg-red-500 text-white';
+												
 												const textColor = isGood
 													? 'text-green-900'
 													: isModerate
 													? 'text-yellow-900'
 													: 'text-red-900';
-												const scoreColor = isGood
-													? 'text-green-700'
+												
+												const iconBg = isGood
+													? 'bg-green-500'
 													: isModerate
-													? 'text-yellow-700'
-													: 'text-red-700';
+													? 'bg-yellow-500'
+													: 'bg-red-500';
 
 												return (
-													<div
+													<motion.div
 														key={idx}
-														className={`p-3 rounded-lg border ${bgColor}`}>
-														<div
-															className={`font-semibold text-sm ${textColor}`}>
-															{region.description ||
-																region.type ||
-																'Artifact Detected'}
-														</div>
-														{score !== undefined && (
-															<div className='mt-2'>
-																<div
-																	className={`text-lg font-bold ${scoreColor}`}>
-																	{formatPercentage(score)}%
+														initial={{ opacity: 0, y: 10 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{ delay: idx * 0.1 }}
+														className={`bg-gradient-to-br ${gradientBg} border-2 ${gradientBorder} rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
+														{/* Header with Icon and Badge */}
+														<div className='flex items-start justify-between mb-3'>
+															<div className='flex items-center gap-3 flex-1'>
+																<div className={`${iconBg} rounded-lg p-2 shadow-md`}>
+																	<span className='text-xl'>{getArtifactIcon(region.type)}</span>
 																</div>
-																<div
-																	className={`text-xs mt-1 ${textColor} opacity-80`}>
-																	{getArtifactExplanation(
-																		region.description,
-																		region.type,
-																		score
-																	)}
+																<div className='flex-1'>
+																	<h5 className={`font-bold text-base ${textColor} mb-1`}>
+																		{region.description ||
+																			region.type?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) ||
+																			'Artifact Detected'}
+																	</h5>
+																</div>
+															</div>
+															{score !== undefined && (
+																<div className={`${badgeColor} px-3 py-1 rounded-full text-sm font-bold shadow-md`}>
+																	{scorePercent}%
+																</div>
+															)}
+														</div>
+
+														{/* Progress Bar */}
+														{score !== undefined && (
+															<div className='mb-3'>
+																<div className='h-3 bg-white/50 rounded-full overflow-hidden shadow-inner'>
+																	<motion.div
+																		initial={{ width: 0 }}
+																		animate={{ width: `${scorePercent}%` }}
+																		transition={{ duration: 1, delay: idx * 0.1 + 0.2 }}
+																		className={`h-full bg-gradient-to-r ${gradientProgress} rounded-full shadow-lg`}
+																	/>
 																</div>
 															</div>
 														)}
-													</div>
+
+														{/* Explanation */}
+														{score !== undefined && (
+															<div className={`text-xs ${textColor} opacity-90 leading-relaxed bg-white/40 rounded-lg p-3`}>
+																{getArtifactExplanation(
+																	region.description,
+																	region.type,
+																	score
+																)}
+															</div>
+														)}
+													</motion.div>
 												);
 											})}
 										</div>
 									);
 								} else {
 									return (
-										<div className='bg-gray-50 p-3 rounded-lg'>
-											<div className='text-gray-600 text-sm'>
+										<div className='bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-6 text-center shadow-sm'>
+											<div className='text-4xl mb-3'>✨</div>
+											<div className='text-gray-700 font-medium text-sm'>
 												{safeVisualEvidence.faceDetection.detected
 													? 'No specific artifacts detected. Face area is being analyzed for artifacts.'
 													: 'No artifacts detected'}
