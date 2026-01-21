@@ -96,10 +96,38 @@ function ChartsAnalysis({ result }) {
 
 	// Extract data for image analysis
 	const details = result.details || {};
-	const forensic = details.forensic_analysis || {};
-	const quality = details.image_quality || {};
-	const frequency = details.frequency_analysis || {};
-	const artifact = details.artifact_analysis || {};
+	const faceFeatures = details.face_features || {};
+	const forensic = faceFeatures.forensic_analysis || {};
+	const quality = faceFeatures.image_quality || {};
+	const frequency = faceFeatures.frequency_analysis || {};
+	const artifact = faceFeatures.artifact_analysis || {};
+	
+	// Get OpenAI detailed scores as fallback
+	const openaiScores = details.openai_analysis?.detailed_scores || {};
+	
+	// Helper function to get nested value with fallbacks
+	const getNestedValue = (obj, path, fallback = 0) => {
+		// Handle null or undefined path
+		if (!path || path === null || path === undefined) {
+			return fallback;
+		}
+		
+		// Handle null or undefined object
+		if (!obj || obj === null || obj === undefined) {
+			return fallback;
+		}
+		
+		const keys = path.split('.');
+		let current = obj;
+		for (const key of keys) {
+			if (current && typeof current === 'object' && key in current) {
+				current = current[key];
+			} else {
+				return fallback;
+			}
+		}
+		return current !== undefined && current !== null ? current : fallback;
+	};
 
 	// Model Confidence Data
 	const modelData = [];
@@ -108,128 +136,213 @@ function ChartsAnalysis({ result }) {
 			const confidence = details.model_confidences?.[model] || 0;
 			modelData.push({
 				name: model.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-				confidence: formatConfidence(confidence),
-				prediction: prediction === 1 ? 'FAKE' : 'REAL',
-			});
+					confidence: formatConfidence(confidence),
+					prediction: prediction === 1 ? 'FAKE' : 'REAL',
+				});
 		});
 	}
 
-	// Forensic Analysis Radar Data
+	// Forensic Analysis Radar Data - Try multiple paths
+	const getForensicValue = (forensicPath, artifactPath = null, openaiKey = null) => {
+		let value = 0;
+		
+		// Try forensic path first (only if path is provided)
+		if (forensicPath) {
+			value = getNestedValue(forensic, forensicPath);
+		}
+		
+		// Try artifact path if provided and value not found
+		if ((value === 0 || value === null || value === undefined) && artifactPath) {
+			value = getNestedValue(artifact, artifactPath);
+		}
+		
+		// Try openai_analysis detailed_scores
+		if ((value === 0 || value === null || value === undefined) && openaiKey) {
+			value = openaiScores[openaiKey] || 0;
+		}
+		
+		// Convert to percentage if value is between 0-1
+		if (value > 0 && value <= 1) {
+			value = value * 100;
+		}
+		
+		return formatConfidence(value || 0);
+	};
+
 	const forensicData = [
 		{
 			subject: 'Lighting',
-			score: formatConfidence(
-				forensic.lighting_analysis?.brightness_uniformity || 0
-			),
+			score: getForensicValue('lighting_analysis.brightness_uniformity', null, 'lighting_consistency'),
 			fullMark: 100,
 		},
 		{
 			subject: 'Skin',
-			score: formatConfidence(forensic.skin_analysis?.skin_naturalness || 0),
+			score: getForensicValue('skin_analysis.skin_naturalness', null, 'skin_texture_score'),
 			fullMark: 100,
 		},
 		{
 			subject: 'Symmetry',
-			score: formatConfidence(
-				forensic.symmetry_analysis?.face_symmetry || 0
-			),
+			score: getForensicValue('symmetry_analysis.face_symmetry', null, 'facial_symmetry_score'),
 			fullMark: 100,
 		},
 		{
 			subject: 'Edges',
-			score: formatConfidence(artifact.edge_analysis?.edge_uniformity || 0),
+			score: getForensicValue(null, 'edge_analysis.edge_uniformity', 'edge_uniformity'),
 			fullMark: 100,
 		},
 		{
 			subject: 'Texture',
-			score: formatConfidence(
-				artifact.texture_analysis?.texture_consistency || 0
-			),
+			score: getForensicValue(null, 'texture_analysis.texture_consistency', 'skin_texture_score'),
 			fullMark: 100,
 		},
 		{
 			subject: 'Borders',
-			score: formatConfidence(artifact.border_analysis?.border_quality || 0),
+			score: getForensicValue(null, 'border_analysis.border_quality', 'border_quality'),
 			fullMark: 100,
 		},
 	];
 
-	// Image Quality Metrics
+	// Image Quality Metrics - Try multiple paths
+	const getQualityValue = (key, normalizeFn = (v) => v) => {
+		// Try face_features.image_quality path first
+		let value = quality[key];
+		
+		// Try face_features.image_quality directly
+		if (value === undefined || value === null) {
+			value = faceFeatures.image_quality?.[key];
+		}
+		
+		// Try details.image_quality path
+		if (value === undefined || value === null) {
+			value = details.image_quality?.[key];
+		}
+		
+		// Default to 0 if still not found
+		value = value || 0;
+		
+		// Apply normalization
+		return formatConfidence(normalizeFn(value));
+	};
+
 	const qualityData = [
 		{
 			name: 'Brightness',
-			value: formatConfidence((quality.brightness || 0) / 2.55), // Normalize 0-255 to 0-100
+			value: getQualityValue('brightness', (v) => {
+				// If value is 0-255, normalize to 0-100
+				if (v > 1 && v <= 255) return Math.min(100, (v / 2.55));
+				// If value is 0-1, convert to percentage
+				if (v > 0 && v <= 1) return v * 100;
+				// If already 0-100, return as is
+				if (v >= 0 && v <= 100) return v;
+				return 0;
+			}),
 			max: 100,
 		},
 		{
 			name: 'Contrast',
-			value: formatConfidence((quality.contrast || 0) / 2.55),
+			value: getQualityValue('contrast', (v) => {
+				if (v > 1 && v <= 255) return Math.min(100, (v / 2.55));
+				if (v > 0 && v <= 1) return v * 100;
+				if (v >= 0 && v <= 100) return v;
+				return 0;
+			}),
 			max: 100,
 		},
 		{
 			name: 'Sharpness',
-			value: formatConfidence(Math.min(100, (quality.sharpness || 0) / 10)),
+			value: getQualityValue('sharpness', (v) => {
+				// Sharpness is typically 0-1000+, normalize to 0-100
+				if (v > 10) return Math.min(100, v / 10);
+				if (v > 0 && v <= 1) return v * 100;
+				if (v >= 0 && v <= 100) return v;
+				return 0;
+			}),
 			max: 100,
 		},
 		{
 			name: 'Noise Level',
-			value: formatConfidence(Math.min(100, (quality.noise_level || 0) * 10)),
+			value: getQualityValue('noise_level', (v) => {
+				// Noise level is typically 0-10, normalize to 0-100
+				if (v > 0 && v <= 10) return Math.min(100, v * 10);
+				if (v > 0 && v <= 1) return v * 100;
+				if (v >= 0 && v <= 100) return v;
+				return 0;
+			}),
 			max: 100,
 		},
 	];
 
-	// Feature Scores Breakdown
+	// Feature Scores Breakdown - Use same helper function
+	const getFeatureScore = (forensicPath = null, artifactPath = null, openaiKey = null) => {
+		let value = 0;
+		
+		// Try forensic path first (only if path is provided)
+		if (forensicPath && forensicPath !== null) {
+			value = getNestedValue(forensic, forensicPath);
+		}
+		
+		// Try artifact path if provided and value not found
+		if ((value === 0 || value === null || value === undefined) && artifactPath && artifactPath !== null) {
+			value = getNestedValue(artifact, artifactPath);
+		}
+		
+		// Try openai_analysis detailed_scores
+		if ((value === 0 || value === null || value === undefined) && openaiKey) {
+			value = openaiScores[openaiKey] || 0;
+		}
+		
+		// Convert to percentage if value is between 0-1
+		if (value > 0 && value <= 1) {
+			value = value * 100;
+		}
+		
+		return formatConfidence(value || 0);
+	};
+
 	const featureScores = [
 		{
 			name: 'Border Quality',
-			score: formatConfidence(artifact.border_analysis?.border_quality || 0),
+			score: getFeatureScore(null, 'border_analysis.border_quality', 'border_quality'),
 			color: '#3b82f6',
 		},
 		{
 			name: 'Edge Uniformity',
-			score: formatConfidence(artifact.edge_analysis?.edge_uniformity || 0),
+			score: getFeatureScore(null, 'edge_analysis.edge_uniformity', 'edge_uniformity'),
 			color: '#8b5cf6',
 		},
 		{
 			name: 'Lighting Consistency',
-			score: formatConfidence(
-				forensic.lighting_analysis?.brightness_uniformity || 0
-			),
+			score: getFeatureScore('lighting_analysis.brightness_uniformity', null, 'lighting_consistency'),
 			color: '#10b981',
 		},
 		{
 			name: 'Skin Texture',
-			score: formatConfidence(forensic.skin_analysis?.skin_naturalness || 0),
+			score: getFeatureScore('skin_analysis.skin_naturalness', null, 'skin_texture_score'),
 			color: '#f59e0b',
 		},
 		{
 			name: 'Facial Symmetry',
-			score: formatConfidence(
-				forensic.symmetry_analysis?.face_symmetry || 0
-			),
+			score: getFeatureScore('symmetry_analysis.face_symmetry', null, 'facial_symmetry_score'),
 			color: '#ef4444',
 		},
 		{
 			name: 'Texture Consistency',
-			score: formatConfidence(
-				artifact.texture_analysis?.texture_consistency || 0
-			),
+			score: getFeatureScore(null, 'texture_analysis.texture_consistency', 'skin_texture_score'),
 			color: '#ec4899',
 		},
 	];
 
-	// Prediction Distribution
+	// Prediction Distribution - Fix pie chart calculation
+	const confidencePercent = formatConfidence(result.confidence);
 	const pieData = [
 		{
 			name: 'Real',
-			value:
-				result.prediction === 'REAL' ? formatConfidence(result.confidence) : 0,
+			value: result.prediction === 'REAL' ? confidencePercent : 100 - confidencePercent,
 			color: '#22c55e',
 		},
 		{
 			name: 'Fake',
-			value:
-				result.prediction === 'FAKE' ? formatConfidence(result.confidence) : 0,
+			value: result.prediction === 'FAKE' ? confidencePercent : 100 - confidencePercent,
 			color: '#ef4444',
 		},
 	];
@@ -281,11 +394,11 @@ function ChartsAnalysis({ result }) {
 								</div>
 								<h3 className='text-xl font-bold text-gray-900'>
 									Model Confidence
-								</h3>
+					</h3>
 							</div>
 						</div>
 						<div className='h-80'>
-							<ResponsiveContainer width='100%' height='100%'>
+						<ResponsiveContainer width='100%' height='100%'>
 								<BarChart data={modelData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
 									<CartesianGrid strokeDasharray='3 3' stroke='#e0e7ff' />
 									<XAxis
@@ -335,13 +448,13 @@ function ChartsAnalysis({ result }) {
 											<stop offset='100%' stopColor='#1d4ed8' stopOpacity={1} />
 										</linearGradient>
 									</defs>
-								</BarChart>
-							</ResponsiveContainer>
-						</div>
+							</BarChart>
+						</ResponsiveContainer>
+					</div>
 					</motion.div>
 				) : null}
 
-				{/* Prediction Distribution */}
+			{/* Prediction Distribution */}
 				<motion.div
 					initial={{ opacity: 0, scale: 0.95 }}
 					animate={{ opacity: 1, scale: 1 }}
@@ -353,52 +466,79 @@ function ChartsAnalysis({ result }) {
 								<PieChart className='w-5 h-5 text-white' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-900'>
-								Prediction Distribution
-							</h3>
+					Prediction Distribution
+				</h3>
 						</div>
 					</div>
 					<div className='h-80'>
-						<ResponsiveContainer width='100%' height='100%'>
-							<RechartsPieChart>
-								<Pie
-									data={pieData}
-									cx='50%'
-									cy='50%'
-									labelLine={false}
-									label={({ name, percent }) =>
-										`${name}: ${(percent * 100).toFixed(1)}%`
-									}
-									outerRadius={100}
+					<ResponsiveContainer width='100%' height='100%'>
+						<RechartsPieChart>
+							<Pie
+								data={pieData}
+								cx='50%'
+								cy='50%'
+									labelLine={true}
+									label={({ name, value, percent }) => {
+										// Only show label if value is significant (> 5%)
+										if (value > 5) {
+											return `${name}: ${value}%`;
+										}
+										return '';
+									}}
+									outerRadius={110}
+									innerRadius={30}
 									fill='#8884d8'
-									dataKey='value'>
-									{pieData.map((entry, index) => (
+								dataKey='value'
+									stroke='#fff'
+									strokeWidth={3}>
+								{pieData.map((entry, index) => (
 										<Cell
 											key={`cell-${index}`}
 											fill={entry.color}
 											stroke={entry.color}
-											strokeWidth={2}
+											strokeWidth={3}
 										/>
-									))}
-								</Pie>
+								))}
+							</Pie>
 								<Tooltip
 									contentStyle={{
-										backgroundColor: 'rgba(255, 255, 255, 0.95)',
-										border: '1px solid #e0e7ff',
+										backgroundColor: 'rgba(255, 255, 255, 0.98)',
+										border: '2px solid #8b5cf6',
 										borderRadius: '8px',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+										fontSize: '14px',
+										fontWeight: 600,
 									}}
-									formatter={(value) => `${value}%`}
+									formatter={(value, name, props) => [
+										`${value}%`,
+										`${props.payload.name} Prediction`
+									]}
 								/>
 								<Legend
 									verticalAlign='bottom'
-									height={36}
-									formatter={(value) => (
-										<span style={{ color: '#475569', fontWeight: 500 }}>
-											{value}
-										</span>
-									)}
+									height={50}
+									iconType='circle'
+									formatter={(value, entry) => {
+										const data = pieData.find(d => d.name === value);
+										return (
+											<span style={{ color: '#475569', fontWeight: 600, fontSize: '14px' }}>
+												{value}: {data?.value || 0}%
+											</span>
+										);
+									}}
 								/>
-							</RechartsPieChart>
-						</ResponsiveContainer>
+						</RechartsPieChart>
+					</ResponsiveContainer>
+						{/* Additional Info */}
+						<div className='mt-4 text-center'>
+							<p className='text-sm text-gray-600'>
+								<span className='font-semibold'>Overall Confidence:</span>{' '}
+								<span className='font-bold text-lg'>{confidencePercent}%</span>
+							</p>
+							<p className='text-xs text-gray-500 mt-1'>
+								Prediction: <span className='font-semibold'>{result.prediction}</span>
+							</p>
+						</div>
 					</div>
 				</motion.div>
 
@@ -421,34 +561,53 @@ function ChartsAnalysis({ result }) {
 					<div className='h-80'>
 						<ResponsiveContainer width='100%' height='100%'>
 							<RadarChart data={forensicData}>
-								<PolarGrid stroke='#cbd5e1' />
+								<PolarGrid stroke='#cbd5e1' strokeWidth={1} />
 								<PolarAngleAxis
 									dataKey='subject'
-									tick={{ fill: '#475569', fontSize: 12 }}
+									tick={{ fill: '#475569', fontSize: 13, fontWeight: 600 }}
 								/>
 								<PolarRadiusAxis
 									angle={90}
 									domain={[0, 100]}
-									tick={{ fill: '#64748b', fontSize: 10 }}
+									tick={{ fill: '#64748b', fontSize: 11 }}
+									tickCount={6}
 								/>
 								<Radar
 									name='Score'
 									dataKey='score'
 									stroke='#10b981'
 									fill='#10b981'
-									fillOpacity={0.6}
-									strokeWidth={2}
+									fillOpacity={0.7}
+									strokeWidth={3}
+									dot={{ fill: '#10b981', r: 5 }}
+									activeDot={{ r: 7 }}
 								/>
 								<Tooltip
 									contentStyle={{
-										backgroundColor: 'rgba(255, 255, 255, 0.95)',
-										border: '1px solid #e0e7ff',
+										backgroundColor: 'rgba(255, 255, 255, 0.98)',
+										border: '2px solid #10b981',
 										borderRadius: '8px',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+										fontSize: '14px',
+										fontWeight: 600,
 									}}
-									formatter={(value) => [`${value}%`, 'Score']}
+									formatter={(value, name, props) => [
+										`${value}%`,
+										`${props.payload.subject} Score`
+									]}
+									labelFormatter={(label) => `Feature: ${label}`}
 								/>
 							</RadarChart>
 						</ResponsiveContainer>
+						{/* Legend with values */}
+						<div className='mt-4 grid grid-cols-3 gap-2 text-xs'>
+							{forensicData.map((item, idx) => (
+								<div key={idx} className='flex items-center justify-between px-2 py-1 bg-gray-50 rounded'>
+									<span className='text-gray-600 font-medium'>{item.subject}:</span>
+									<span className='font-bold text-emerald-600'>{item.score}%</span>
+								</div>
+							))}
+						</div>
 					</div>
 				</motion.div>
 
@@ -473,26 +632,50 @@ function ChartsAnalysis({ result }) {
 							<BarChart
 								data={featureScores}
 								layout='vertical'
-								margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
+								margin={{ top: 20, right: 80, left: 120, bottom: 20 }}>
 								<CartesianGrid strokeDasharray='3 3' stroke='#fde68a' />
-								<XAxis type='number' domain={[0, 100]} tick={{ fill: '#64748b' }} />
+								<XAxis 
+									type='number' 
+									domain={[0, 100]} 
+									tick={{ fill: '#64748b', fontSize: 12 }}
+									label={{ 
+										value: 'Score (%)', 
+										position: 'insideBottom', 
+										offset: -5,
+										style: { fill: '#64748b', fontSize: 12, fontWeight: 600 }
+									}}
+								/>
 								<YAxis
 									dataKey='name'
 									type='category'
-									tick={{ fill: '#475569', fontSize: 12 }}
+									tick={{ fill: '#475569', fontSize: 12, fontWeight: 500 }}
+									width={110}
 								/>
 								<Tooltip
 									contentStyle={{
-										backgroundColor: 'rgba(255, 255, 255, 0.95)',
-										border: '1px solid #e0e7ff',
+										backgroundColor: 'rgba(255, 255, 255, 0.98)',
+										border: '2px solid #f59e0b',
 										borderRadius: '8px',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+										fontSize: '14px',
+										fontWeight: 600,
 									}}
-									formatter={(value) => [`${value}%`, 'Score']}
+									formatter={(value, name, props) => [
+										`${value}%`,
+										`${props.payload.name} Score`
+									]}
+									labelFormatter={() => 'Feature Analysis'}
 								/>
 								<Bar
 									dataKey='score'
 									radius={[0, 8, 8, 0]}
-									label={{ position: 'right', fill: '#475569' }}>
+									label={{ 
+										position: 'right', 
+										fill: '#1e293b',
+										fontSize: 13,
+										fontWeight: 700,
+										formatter: (value) => value > 0 ? `${value}%` : ''
+									}}>
 									{featureScores.map((entry, index) => (
 										<Cell key={`cell-${index}`} fill={entry.color} />
 									))}
@@ -531,25 +714,32 @@ function ChartsAnalysis({ result }) {
 									<CartesianGrid strokeDasharray='3 3' stroke='#bae6fd' />
 									<XAxis
 										dataKey='name'
-										tick={{ fill: '#64748b', fontSize: 12 }}
+										tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
 									/>
 									<YAxis
 										domain={[0, 100]}
-										tick={{ fill: '#64748b' }}
+										tick={{ fill: '#64748b', fontSize: 12 }}
 										label={{
-											value: 'Score',
+											value: 'Quality Score (%)',
 											angle: -90,
 											position: 'insideLeft',
-											style: { fill: '#64748b' },
+											style: { fill: '#64748b', fontSize: 12, fontWeight: 600 },
 										}}
 									/>
 									<Tooltip
 										contentStyle={{
-											backgroundColor: 'rgba(255, 255, 255, 0.95)',
-											border: '1px solid #e0e7ff',
+											backgroundColor: 'rgba(255, 255, 255, 0.98)',
+											border: '2px solid #06b6d4',
 											borderRadius: '8px',
+											boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+											fontSize: '14px',
+											fontWeight: 600,
 										}}
-										formatter={(value) => [`${value}%`, 'Quality']}
+										formatter={(value, name, props) => [
+											`${value}%`,
+											`${props.payload.name} Quality`
+										]}
+										labelFormatter={(label) => `Metric: ${label}`}
 									/>
 									<Area
 										type='monotone'
@@ -558,9 +748,20 @@ function ChartsAnalysis({ result }) {
 										strokeWidth={3}
 										fillOpacity={1}
 										fill='url(#qualityGradient)'
+										dot={{ fill: '#06b6d4', r: 5, strokeWidth: 2, stroke: '#fff' }}
+										activeDot={{ r: 7, strokeWidth: 2 }}
 									/>
 								</AreaChart>
 							</ResponsiveContainer>
+						{/* Quality Metrics Summary */}
+						<div className='mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs'>
+							{qualityData.map((item, idx) => (
+								<div key={idx} className='flex flex-col items-center px-2 py-2 bg-cyan-50 rounded border border-cyan-200'>
+									<span className='text-gray-600 font-medium text-center mb-1'>{item.name}</span>
+									<span className='font-bold text-cyan-600 text-base'>{item.value}%</span>
+								</div>
+							))}
+						</div>
 					</div>
 				</motion.div>
 				) : null}
@@ -585,35 +786,67 @@ function ChartsAnalysis({ result }) {
 						<ResponsiveContainer width='100%' height='100%'>
 							<LineChart data={confidenceTrend} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 								<CartesianGrid strokeDasharray='3 3' stroke='#fecdd3' />
-								<XAxis dataKey='name' tick={{ fill: '#64748b' }} />
+								<XAxis 
+									dataKey='name' 
+									tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+								/>
 								<YAxis
 									domain={[0, 100]}
-									tick={{ fill: '#64748b' }}
+									tick={{ fill: '#64748b', fontSize: 12 }}
 									label={{
-										value: 'Confidence %',
+										value: 'Confidence (%)',
 										angle: -90,
 										position: 'insideLeft',
-										style: { fill: '#64748b' },
+										style: { fill: '#64748b', fontSize: 12, fontWeight: 600 },
 									}}
 								/>
 								<Tooltip
 									contentStyle={{
-										backgroundColor: 'rgba(255, 255, 255, 0.95)',
-										border: '1px solid #e0e7ff',
+										backgroundColor: 'rgba(255, 255, 255, 0.98)',
+										border: '2px solid #f43f5e',
 										borderRadius: '8px',
+										boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+										fontSize: '14px',
+										fontWeight: 600,
 									}}
-									formatter={(value) => [`${value}%`, 'Confidence']}
+									formatter={(value, name, props) => [
+										`${value}%`,
+										`${props.payload.name} Stage Confidence`
+									]}
+									labelFormatter={(label) => `Analysis Stage: ${label}`}
 								/>
 								<Line
 									type='monotone'
 									dataKey='value'
 									stroke='#f43f5e'
 									strokeWidth={4}
-									dot={{ fill: '#f43f5e', r: 6 }}
-									activeDot={{ r: 8 }}
+									dot={{ fill: '#f43f5e', r: 7, strokeWidth: 2, stroke: '#fff' }}
+									activeDot={{ r: 9, strokeWidth: 2 }}
+									label={{ 
+										position: 'top', 
+										fill: '#1e293b',
+										fontSize: 13,
+										fontWeight: 700,
+										formatter: (value) => `${value}%`
+									}}
 								/>
 							</LineChart>
 						</ResponsiveContainer>
+						{/* Trend Summary */}
+						<div className='mt-4 flex items-center justify-center gap-4 text-sm'>
+							<div className='flex items-center gap-2'>
+								<div className='w-3 h-3 rounded-full bg-rose-500'></div>
+								<span className='text-gray-600'>Initial: <span className='font-bold text-rose-600'>{confidenceTrend[0].value}%</span></span>
+							</div>
+							<div className='flex items-center gap-2'>
+								<div className='w-3 h-3 rounded-full bg-rose-400'></div>
+								<span className='text-gray-600'>Analysis: <span className='font-bold text-rose-600'>{confidenceTrend[1].value}%</span></span>
+							</div>
+							<div className='flex items-center gap-2'>
+								<div className='w-3 h-3 rounded-full bg-rose-600'></div>
+								<span className='text-gray-600'>Final: <span className='font-bold text-rose-600'>{confidenceTrend[2].value}%</span></span>
+							</div>
+						</div>
 					</div>
 				</motion.div>
 			</div>
@@ -677,7 +910,7 @@ function ChartsAnalysis({ result }) {
 							</p>
 						</div>
 						<Zap className='w-12 h-12 text-purple-200' />
-					</div>
+				</div>
 				</motion.div>
 			</div>
 		</div>
