@@ -179,11 +179,11 @@ const Results = () => {
   const getPredictionIcon = (prediction) => {
     switch (prediction?.toUpperCase()) {
       case 'FAKE':
-        return <XCircle className="w-6 h-6 text-red-600" />;
+        return <XCircle className="w-12 h-12 text-white" />;
       case 'REAL':
-        return <CheckCircle className="w-6 h-6 text-green-600" />;
+        return <CheckCircle className="w-12 h-12 text-white" />;
       default:
-        return <AlertTriangle className="w-6 h-6 text-yellow-600" />;
+        return <AlertTriangle className="w-12 h-12 text-white" />;
     }
   };
 
@@ -241,78 +241,179 @@ const Results = () => {
   const renderSummary = () => {
     if (!result) return null;
 
-    return (
-      <div className="space-y-6">
-        {/* Main Result */}
-        <div className="card text-center">
-          <div className="flex justify-center mb-4">
-            {getPredictionIcon(result.prediction)}
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {result.prediction === 'FAKE' ? 'Deepfake Detected' : 'Authentic Content'}
-          </h2>
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPredictionColor(result.prediction)}`}>
-              {result.prediction}
-            </span>
-            <span className="text-2xl font-bold text-gray-900">
-              {formatConfidence(result.confidence)}% Confidence
-            </span>
-          </div>
-          
-          {/* Confidence Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div 
-              className={`h-3 rounded-full transition-all duration-500 ${
-                result.prediction === 'FAKE' ? 'bg-red-500' : 'bg-green-500'
-              }`}
-              style={{ width: `${formatConfidence(result.confidence)}%` }}
-            />
-          </div>
-          
-          <p className="text-gray-600">
-            {result.prediction === 'FAKE' 
-              ? result.type === 'audio' 
-                ? 'This audio shows signs of being artificially generated or manipulated.'
-                : 'This content shows signs of being artificially generated or manipulated.'
-              : result.type === 'audio'
-                ? 'This audio appears to be authentic and unmodified.'
-                : 'This content appears to be authentic and unmodified.'
-            }
-          </p>
-        </div>
+    const isFake = result.prediction === 'FAKE';
+    const confidence = formatConfidence(result.confidence);
+    const confidenceColor = isFake 
+      ? 'from-red-500 via-rose-500 to-pink-500' 
+      : 'from-emerald-500 via-green-500 to-teal-500';
 
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Clock className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {result.analysis_time ? new Date(result.analysis_time).toLocaleTimeString() : 'N/A'}
-            </div>
-            <div className="text-gray-600">Analysis Time</div>
+    return (
+      <div className="space-y-8">
+        {/* Main Result Card - Stunning Design */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className={`relative overflow-hidden rounded-2xl shadow-2xl ${
+            isFake 
+              ? 'bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 border-2 border-red-200' 
+              : 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 border-2 border-emerald-200'
+          }`}
+        >
+          {/* Decorative Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 2px 2px, ${isFake ? '#ef4444' : '#10b981'} 1px, transparent 0)`,
+              backgroundSize: '40px 40px'
+            }}></div>
           </div>
+
+          <div className="relative px-8 py-12 text-center">
+            {/* Icon with Glow Effect */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="flex justify-center mb-6"
+            >
+              <div className={`relative inline-flex items-center justify-center w-24 h-24 rounded-full ${
+                isFake 
+                  ? 'bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/50' 
+                  : 'bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/50'
+              }`}>
+                <div className="absolute inset-0 rounded-full animate-ping opacity-20"></div>
+                {getPredictionIcon(result.prediction)}
+              </div>
+            </motion.div>
+
+            {/* Main Title */}
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700"
+            >
+              {isFake ? 'Deepfake Detected' : 'Authentic Content'}
+            </motion.h2>
+
+            {/* Badge and Confidence */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex items-center justify-center gap-4 mb-6 flex-wrap"
+            >
+              <span className={`px-6 py-2.5 rounded-full text-sm font-bold shadow-lg ${
+                isFake
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white'
+                  : 'bg-gradient-to-r from-emerald-600 to-green-600 text-white'
+              }`}>
+                {result.prediction}
+              </span>
+              <div className="flex items-baseline gap-2">
+                <span className={`text-5xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r ${confidenceColor}`}>
+                  {confidence}%
+                </span>
+                <span className="text-lg font-semibold text-gray-600">Confidence</span>
+              </div>
+            </motion.div>
+            
+            {/* Enhanced Confidence Bar */}
+            <motion.div
+              initial={{ opacity: 0, scaleX: 0 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="w-full max-w-2xl mx-auto mb-6"
+            >
+              <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${confidence}%` }}
+                  transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
+                  className={`h-full rounded-full bg-gradient-to-r ${confidenceColor} shadow-lg relative overflow-hidden`}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                </motion.div>
+              </div>
+            </motion.div>
+            
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="text-lg text-gray-700 font-medium max-w-2xl mx-auto"
+            >
+              {isFake 
+                ? result.type === 'audio' 
+                  ? 'This audio shows signs of being artificially generated or manipulated.'
+                  : 'This content shows signs of being artificially generated or manipulated.'
+                : result.type === 'audio'
+                  ? 'This audio appears to be authentic and unmodified.'
+                  : 'This content appears to be authentic and unmodified.'
+              }
+            </motion.p>
+          </div>
+        </motion.div>
+
+        {/* Enhanced Stats Cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Analysis Time Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="group relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/30 mb-4 group-hover:scale-110 transition-transform">
+                <Clock className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {result.analysis_time ? new Date(result.analysis_time).toLocaleTimeString() : 'N/A'}
+              </div>
+              <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Analysis Time</div>
+            </div>
+          </motion.div>
           
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Zap className="w-6 h-6 text-purple-600" />
+          {/* Models Used Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="group relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30 mb-4 group-hover:scale-110 transition-transform">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {result.model_info?.models_used?.length || '1'}
+              </div>
+              <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">AI Models Used</div>
             </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {result.model_info?.models_used?.length || 'N/A'}
-            </div>
-            <div className="text-gray-600">AI Models Used</div>
-          </div>
+          </motion.div>
           
-          <div className="card text-center">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <TrendingUp className="w-6 h-6 text-green-600" />
+          {/* Accuracy Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="group relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="relative p-6 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/30 mb-4 group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {confidence}%
+              </div>
+              <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Accuracy</div>
             </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {formatConfidence(result.confidence)}%
-            </div>
-            <div className="text-gray-600">Accuracy</div>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
@@ -1876,47 +1977,62 @@ const Results = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate('/results')}
-              className="btn-secondary flex items-center space-x-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to All Results</span>
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Analysis Results</h1>
-              <p className="text-gray-600">Deepfake detection analysis complete</p>
+        {/* Modern Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/results')}
+                className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900 font-medium shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                <span>Back to Results</span>
+              </motion.button>
+              <div className="hidden md:block h-8 w-px bg-gray-300"></div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                  Analysis Results
+                </h1>
+                <p className="text-gray-500 font-medium mt-1">Deepfake detection analysis complete</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={generateReport}
+                className="group flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900 font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+                <span>Download Report</span>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={shareResults}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 transition-all duration-200"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share</span>
+              </motion.button>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={generateReport}
-              className="btn-secondary flex items-center space-x-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download Report</span>
-            </button>
-            <button
-              onClick={shareResults}
-              className="btn-primary flex items-center space-x-2"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share</span>
-            </button>
-          </div>
-        </div>
+        </motion.div>
 
 
-        {/* Tabs */}
+        {/* Modern Tabs */}
         <div className="mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
+          <div className="bg-white rounded-xl p-1.5 shadow-lg border border-gray-100 inline-flex">
+            <nav className="flex gap-2">
               {[
                 { id: 'summary', label: 'Summary', icon: FileText },
                 { id: 'detailed', label: 'Detailed Analysis', icon: BarChart3 },
@@ -1924,19 +2040,30 @@ const Results = () => {
                 { id: 'visual', label: 'Visual Evidence', icon: Eye }
               ].map((tab) => {
                 const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
                 return (
-                  <button
+                  <motion.button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab.id
-                        ? 'border-primary-500 text-primary-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                      isActive
+                        ? 'text-primary-700 bg-primary-50'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary-100 to-primary-50 border border-primary-200"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
+                    )}
+                    <Icon className={`w-4 h-4 relative z-10 ${isActive ? 'text-primary-600' : ''}`} />
+                    <span className="relative z-10">{tab.label}</span>
+                  </motion.button>
                 );
               })}
             </nav>
