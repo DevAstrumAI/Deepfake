@@ -67,7 +67,7 @@ function ChartsAnalysis({ result }) {
 
 	// Handle audio analysis charts
 	if (result.type === 'audio') {
-		const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+		const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
 		const baseAudioUrl = `${apiBaseUrl}/uploads/${fileId}${getFileExtension(
 			result.filename
 		)}`;

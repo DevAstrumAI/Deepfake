@@ -3,12 +3,13 @@ import AudioPlayer from './AudioPlayer';
 import AudioWaveform from './AudioWaveform';
 
 const AudioDebug = () => {
-  const [testUrl, setTestUrl] = useState('http://localhost:8000/uploads/test-audio-player.wav');
+  const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
+  const [testUrl, setTestUrl] = useState(`${apiBaseUrl}/uploads/test-audio-player.wav`);
   const [customUrl, setCustomUrl] = useState('');
 
   const testUrls = [
-    'http://localhost:8000/uploads/test-audio-player.wav',
-    'http://localhost:8000/uploads/1f5f3e82-3455-42b2-8916-123249b08b21.wav',
+    `${apiBaseUrl}/uploads/test-audio-player.wav`,
+    `${apiBaseUrl}/uploads/1f5f3e82-3455-42b2-8916-123249b08b21.wav`,
     'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // External test
   ];
 

@@ -183,7 +183,7 @@ const Results = () => {
 		try {
 			toast.loading('Generating PDF report...', { id: 'pdf-report' });
 
-			const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+			const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
 			const token = localStorage.getItem('auth_token');
 			const response = await fetch(`${API_BASE_URL}/report/${fileId}`, {
 				method: 'GET',
@@ -531,7 +531,7 @@ const Results = () => {
 																			);
 
 																			const API_BASE_URL =
-																				process.env.REACT_APP_API_URL || '';
+																				process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
 																			const token =
 																				localStorage.getItem('auth_token');
 																			const response = await fetch(

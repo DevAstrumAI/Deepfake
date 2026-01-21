@@ -1745,7 +1745,7 @@ async def analyze_video(file_path: str) -> Dict:
         # Extract model information
         model_info = results_serializable.get('model_info', {})
         if not model_info:
-            model_info = {
+                model_info = {
                 'models_used': ['openai_gpt4_vision'],
                 'ensemble_confidence': float(results.get('confidence', 0.0))
             }
