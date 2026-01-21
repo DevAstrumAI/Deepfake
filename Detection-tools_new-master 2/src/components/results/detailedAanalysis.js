@@ -25,7 +25,7 @@ function DetailedAnalysis({ result }) {
 	const details = result.details;
 
 	return (
-		<div className='space-y-6 max-w-6xl mx-auto'>
+		<div className='space-y-6 w-full'>
 			<div className='flex flex-col md:flex-row gap-6'>
 				{/* AI Explanation */}
 				<div className='flex-1'>

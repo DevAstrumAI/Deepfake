@@ -317,7 +317,7 @@ const Results = () => {
 		<div className='min-h-screen py-8' style={{
 			background: 'linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%)'
 		}}>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+				<div className='w-full px-4 sm:px-6 lg:px-8'>
 					{/* Header */}
 					<div className='flex items-center justify-between mb-8'>
 						<div className='flex items-center space-x-4'>
@@ -609,7 +609,7 @@ const Results = () => {
 
 	return (
 		<div className='min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50 py-8'>
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+			<div className='w-full px-4 sm:px-6 lg:px-8'>
 				{/* Modern Header */}
 				<motion.div
 					initial={{ opacity: 0, y: -20 }}

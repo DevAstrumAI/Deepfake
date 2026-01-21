@@ -125,7 +125,7 @@ const Home = () => {
           <div className="absolute -bottom-8 left-1/2 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" style={{ backgroundColor: '#914ffc' }}></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -163,7 +163,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl mb-12 w-full px-4 leading-relaxed"
             style={{ color: '#e0e0e0' }}
           >
             Advanced deepfake detection for images, videos, and audio using cutting-edge
@@ -252,7 +252,7 @@ const Home = () => {
       <section className="relative py-20" style={{
         background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)'
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -289,7 +289,7 @@ const Home = () => {
       <section className="py-24" style={{
         background: 'linear-gradient(180deg, #16213e 0%, #1a1a2e 50%, #16213e 100%)'
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -305,7 +305,7 @@ const Home = () => {
                 Features
               </span>
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: '#b0b0b0' }}>
+            <p className="text-xl w-full px-4" style={{ color: '#b0b0b0' }}>
               Our advanced AI system combines multiple detection methods for comprehensive analysis
             </p>
           </motion.div>
@@ -349,7 +349,7 @@ const Home = () => {
       <section className="py-24" style={{
         background: 'linear-gradient(180deg, #16213e 0%, #1a1a2e 100%)'
       }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -360,7 +360,7 @@ const Home = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: '#ffffff' }}>
               Supported File Formats
             </h2>
-            <p className="text-xl max-w-3xl mx-auto" style={{ color: '#b0b0b0' }}>
+            <p className="text-xl w-full px-4" style={{ color: '#b0b0b0' }}>
               Analyze various media types with our comprehensive format support
             </p>
           </motion.div>
@@ -557,7 +557,7 @@ const Home = () => {
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }}></div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -567,7 +567,7 @@ const Home = () => {
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Ready to Detect Deepfakes?
             </h2>
-            <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-purple-100 mb-10 w-full px-4">
               Upload your media and get instant AI-powered analysis. No credit card required.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

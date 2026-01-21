@@ -35,7 +35,7 @@ const Educational = () => {
               Deepfake Education Center
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-700 w-full px-4 leading-relaxed">
               Learn about deepfakes, understand how they work, master detection
               techniques, and discover how to protect yourself in an AI-powered
               world.
@@ -53,7 +53,7 @@ const Educational = () => {
     { component: <FutureOfDeepfakes />, bg: "bg-gray-50" },
     {
       component: (
-        <div className="max-w-5xl mx-auto px-6 text-center">
+        <div className="w-full px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -63,7 +63,7 @@ const Educational = () => {
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">
               Ready to Test Your Skills?
             </h2>
-            <p className="text-xl md:text-2xl text-purple-100 mb-12 max-w-4xl mx-auto">
+            <p className="text-xl md:text-2xl text-purple-100 mb-12 w-full px-4">
               Put your knowledge into practice with our advanced deepfake
               detection tool.
             </p>

@@ -74,7 +74,7 @@ function RenderSummary({ result }) {
 	};
 
 	return (
-		<div className='relative max-w-6xl mx-auto'>
+		<div className='relative w-full'>
 			{/* Animated Background Blobs */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none'>
 				<motion.div
