@@ -4,6 +4,7 @@ import AudioAnalysis from '../AudioAnalysis';
 import AudioPlayer from '../AudioPlayer';
 import VideoCharts from './videoCharts';
 import AudioWaveform from '../AudioWaveform';
+import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
 	LineChart,
@@ -267,7 +268,7 @@ function ChartsAnalysis({ result }) {
 			{/* Grid Layout */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
 				{/* Model Confidence Comparison */}
-				{modelData.length > 0 && (
+				{modelData.length > 0 ? (
 					<motion.div
 						initial={{ opacity: 0, scale: 0.95 }}
 						animate={{ opacity: 1, scale: 1 }}
@@ -338,7 +339,7 @@ function ChartsAnalysis({ result }) {
 							</ResponsiveContainer>
 						</div>
 					</motion.div>
-				)}
+				) : null}
 
 				{/* Prediction Distribution */}
 				<motion.div
@@ -355,51 +356,51 @@ function ChartsAnalysis({ result }) {
 								Prediction Distribution
 							</h3>
 						</div>
-						<div className='h-80'>
-							<ResponsiveContainer width='100%' height='100%'>
-								<RechartsPieChart>
-									<Pie
-										data={pieData}
-										cx='50%'
-										cy='50%'
-										labelLine={false}
-										label={({ name, percent }) =>
-											`${name}: ${(percent * 100).toFixed(1)}%`
-										}
-										outerRadius={100}
-										fill='#8884d8'
-										dataKey='value'>
-										{pieData.map((entry, index) => (
-											<Cell
-												key={`cell-${index}`}
-												fill={entry.color}
-												stroke={entry.color}
-												strokeWidth={2}
-											/>
-										))}
-									</Pie>
-									<Tooltip
-										contentStyle={{
-											backgroundColor: 'rgba(255, 255, 255, 0.95)',
-											border: '1px solid #e0e7ff',
-											borderRadius: '8px',
-										}}
-										formatter={(value) => `${value}%`}
-									/>
-									<Legend
-										verticalAlign='bottom'
-										height={36}
-										formatter={(value) => (
-											<span style={{ color: '#475569', fontWeight: 500 }}>
-												{value}
-											</span>
-										)}
-									/>
-								</RechartsPieChart>
-							</ResponsiveContainer>
-						</div>
-					</motion.div>
-				)}
+					</div>
+					<div className='h-80'>
+						<ResponsiveContainer width='100%' height='100%'>
+							<RechartsPieChart>
+								<Pie
+									data={pieData}
+									cx='50%'
+									cy='50%'
+									labelLine={false}
+									label={({ name, percent }) =>
+										`${name}: ${(percent * 100).toFixed(1)}%`
+									}
+									outerRadius={100}
+									fill='#8884d8'
+									dataKey='value'>
+									{pieData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={entry.color}
+											stroke={entry.color}
+											strokeWidth={2}
+										/>
+									))}
+								</Pie>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: 'rgba(255, 255, 255, 0.95)',
+										border: '1px solid #e0e7ff',
+										borderRadius: '8px',
+									}}
+									formatter={(value) => `${value}%`}
+								/>
+								<Legend
+									verticalAlign='bottom'
+									height={36}
+									formatter={(value) => (
+										<span style={{ color: '#475569', fontWeight: 500 }}>
+											{value}
+										</span>
+									)}
+								/>
+							</RechartsPieChart>
+						</ResponsiveContainer>
+					</div>
+				</motion.div>
 
 				{/* Forensic Analysis Radar */}
 				<motion.div
@@ -416,40 +417,40 @@ function ChartsAnalysis({ result }) {
 								Forensic Analysis
 							</h3>
 						</div>
-						<div className='h-80'>
-							<ResponsiveContainer width='100%' height='100%'>
-								<RadarChart data={forensicData}>
-									<PolarGrid stroke='#cbd5e1' />
-									<PolarAngleAxis
-										dataKey='subject'
-										tick={{ fill: '#475569', fontSize: 12 }}
-									/>
-									<PolarRadiusAxis
-										angle={90}
-										domain={[0, 100]}
-										tick={{ fill: '#64748b', fontSize: 10 }}
-									/>
-									<Radar
-										name='Score'
-										dataKey='score'
-										stroke='#10b981'
-										fill='#10b981'
-										fillOpacity={0.6}
-										strokeWidth={2}
-									/>
-									<Tooltip
-										contentStyle={{
-											backgroundColor: 'rgba(255, 255, 255, 0.95)',
-											border: '1px solid #e0e7ff',
-											borderRadius: '8px',
-										}}
-										formatter={(value) => [`${value}%`, 'Score']}
-									/>
-								</RadarChart>
-							</ResponsiveContainer>
-						</div>
-					</motion.div>
-				)}
+					</div>
+					<div className='h-80'>
+						<ResponsiveContainer width='100%' height='100%'>
+							<RadarChart data={forensicData}>
+								<PolarGrid stroke='#cbd5e1' />
+								<PolarAngleAxis
+									dataKey='subject'
+									tick={{ fill: '#475569', fontSize: 12 }}
+								/>
+								<PolarRadiusAxis
+									angle={90}
+									domain={[0, 100]}
+									tick={{ fill: '#64748b', fontSize: 10 }}
+								/>
+								<Radar
+									name='Score'
+									dataKey='score'
+									stroke='#10b981'
+									fill='#10b981'
+									fillOpacity={0.6}
+									strokeWidth={2}
+								/>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: 'rgba(255, 255, 255, 0.95)',
+										border: '1px solid #e0e7ff',
+										borderRadius: '8px',
+									}}
+									formatter={(value) => [`${value}%`, 'Score']}
+								/>
+							</RadarChart>
+						</ResponsiveContainer>
+					</div>
+				</motion.div>
 
 				{/* Feature Scores Breakdown */}
 				<motion.div
@@ -466,18 +467,81 @@ function ChartsAnalysis({ result }) {
 								Feature Scores
 							</h3>
 						</div>
-						<div className='h-80'>
+					</div>
+					<div className='h-80'>
+						<ResponsiveContainer width='100%' height='100%'>
+							<BarChart
+								data={featureScores}
+								layout='vertical'
+								margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
+								<CartesianGrid strokeDasharray='3 3' stroke='#fde68a' />
+								<XAxis type='number' domain={[0, 100]} tick={{ fill: '#64748b' }} />
+								<YAxis
+									dataKey='name'
+									type='category'
+									tick={{ fill: '#475569', fontSize: 12 }}
+								/>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: 'rgba(255, 255, 255, 0.95)',
+										border: '1px solid #e0e7ff',
+										borderRadius: '8px',
+									}}
+									formatter={(value) => [`${value}%`, 'Score']}
+								/>
+								<Bar
+									dataKey='score'
+									radius={[0, 8, 8, 0]}
+									label={{ position: 'right', fill: '#475569' }}>
+									{featureScores.map((entry, index) => (
+										<Cell key={`cell-${index}`} fill={entry.color} />
+									))}
+								</Bar>
+							</BarChart>
+						</ResponsiveContainer>
+					</div>
+				</motion.div>
+
+				{/* Image Quality Metrics */}
+				{qualityData.length > 0 ? (
+					<motion.div
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						transition={{ delay: 0.5 }}
+						className='card bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200'>
+					<div className='flex items-center justify-between mb-4'>
+						<div className='flex items-center gap-2'>
+							<div className='p-2 bg-cyan-500 rounded-lg'>
+								<Eye className='w-5 h-5 text-white' />
+							</div>
+							<h3 className='text-xl font-bold text-gray-900'>
+								Image Quality Metrics
+							</h3>
+						</div>
+					</div>
+					<div className='h-80'>
 							<ResponsiveContainer width='100%' height='100%'>
-								<BarChart
-									data={featureScores}
-									layout='vertical'
-									margin={{ top: 20, right: 30, left: 100, bottom: 20 }}>
-									<CartesianGrid strokeDasharray='3 3' stroke='#fde68a' />
-									<XAxis type='number' domain={[0, 100]} tick={{ fill: '#64748b' }} />
-									<YAxis
+								<AreaChart data={qualityData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+									<defs>
+										<linearGradient id='qualityGradient' x1='0' y1='0' x2='0' y2='1'>
+											<stop offset='5%' stopColor='#06b6d4' stopOpacity={0.8} />
+											<stop offset='95%' stopColor='#06b6d4' stopOpacity={0} />
+										</linearGradient>
+									</defs>
+									<CartesianGrid strokeDasharray='3 3' stroke='#bae6fd' />
+									<XAxis
 										dataKey='name'
-										type='category'
-										tick={{ fill: '#475569', fontSize: 12 }}
+										tick={{ fill: '#64748b', fontSize: 12 }}
+									/>
+									<YAxis
+										domain={[0, 100]}
+										tick={{ fill: '#64748b' }}
+										label={{
+											value: 'Score',
+											angle: -90,
+											position: 'insideLeft',
+											style: { fill: '#64748b' },
+										}}
 									/>
 									<Tooltip
 										contentStyle={{
@@ -485,84 +549,21 @@ function ChartsAnalysis({ result }) {
 											border: '1px solid #e0e7ff',
 											borderRadius: '8px',
 										}}
-										formatter={(value) => [`${value}%`, 'Score']}
+										formatter={(value) => [`${value}%`, 'Quality']}
 									/>
-									<Bar
-										dataKey='score'
-										radius={[0, 8, 8, 0]}
-										label={{ position: 'right', fill: '#475569' }}>
-										{featureScores.map((entry, index) => (
-											<Cell key={`cell-${index}`} fill={entry.color} />
-										))}
-									</Bar>
-								</BarChart>
+									<Area
+										type='monotone'
+										dataKey='value'
+										stroke='#06b6d4'
+										strokeWidth={3}
+										fillOpacity={1}
+										fill='url(#qualityGradient)'
+									/>
+								</AreaChart>
 							</ResponsiveContainer>
-						</div>
-					</motion.div>
-				)}
-
-				{/* Image Quality Metrics */}
-				{qualityData.length > 0 && (
-					<motion.div
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						transition={{ delay: 0.5 }}
-						className='card bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200'>
-						<div className='flex items-center justify-between mb-4'>
-							<div className='flex items-center gap-2'>
-								<div className='p-2 bg-cyan-500 rounded-lg'>
-									<Eye className='w-5 h-5 text-white' />
-								</div>
-								<h3 className='text-xl font-bold text-gray-900'>
-									Image Quality Metrics
-								</h3>
-							</div>
-							<div className='h-80'>
-								<ResponsiveContainer width='100%' height='100%'>
-									<AreaChart data={qualityData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-										<defs>
-											<linearGradient id='qualityGradient' x1='0' y1='0' x2='0' y2='1'>
-												<stop offset='5%' stopColor='#06b6d4' stopOpacity={0.8} />
-												<stop offset='95%' stopColor='#06b6d4' stopOpacity={0} />
-											</linearGradient>
-										</defs>
-										<CartesianGrid strokeDasharray='3 3' stroke='#bae6fd' />
-										<XAxis
-											dataKey='name'
-											tick={{ fill: '#64748b', fontSize: 12 }}
-										/>
-										<YAxis
-											domain={[0, 100]}
-											tick={{ fill: '#64748b' }}
-											label={{
-												value: 'Score',
-												angle: -90,
-												position: 'insideLeft',
-												style: { fill: '#64748b' },
-											}}
-										/>
-										<Tooltip
-											contentStyle={{
-												backgroundColor: 'rgba(255, 255, 255, 0.95)',
-												border: '1px solid #e0e7ff',
-												borderRadius: '8px',
-											}}
-											formatter={(value) => [`${value}%`, 'Quality']}
-										/>
-										<Area
-											type='monotone'
-											dataKey='value'
-											stroke='#06b6d4'
-											strokeWidth={3}
-											fillOpacity={1}
-											fill='url(#qualityGradient)'
-										/>
-									</AreaChart>
-								</ResponsiveContainer>
-							</div>
-						</div>
-					</motion.div>
-				)}
+					</div>
+				</motion.div>
+				) : null}
 
 				{/* Confidence Trend */}
 				<motion.div
@@ -579,42 +580,42 @@ function ChartsAnalysis({ result }) {
 								Confidence Trend
 							</h3>
 						</div>
-						<div className='h-80'>
-							<ResponsiveContainer width='100%' height='100%'>
-								<LineChart data={confidenceTrend} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-									<CartesianGrid strokeDasharray='3 3' stroke='#fecdd3' />
-									<XAxis dataKey='name' tick={{ fill: '#64748b' }} />
-									<YAxis
-										domain={[0, 100]}
-										tick={{ fill: '#64748b' }}
-										label={{
-											value: 'Confidence %',
-											angle: -90,
-											position: 'insideLeft',
-											style: { fill: '#64748b' },
-										}}
-									/>
-									<Tooltip
-										contentStyle={{
-											backgroundColor: 'rgba(255, 255, 255, 0.95)',
-											border: '1px solid #e0e7ff',
-											borderRadius: '8px',
-										}}
-										formatter={(value) => [`${value}%`, 'Confidence']}
-									/>
-									<Line
-										type='monotone'
-										dataKey='value'
-										stroke='#f43f5e'
-										strokeWidth={4}
-										dot={{ fill: '#f43f5e', r: 6 }}
-										activeDot={{ r: 8 }}
-									/>
-								</LineChart>
-							</ResponsiveContainer>
-						</div>
-					</motion.div>
-				)}
+					</div>
+					<div className='h-80'>
+						<ResponsiveContainer width='100%' height='100%'>
+							<LineChart data={confidenceTrend} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+								<CartesianGrid strokeDasharray='3 3' stroke='#fecdd3' />
+								<XAxis dataKey='name' tick={{ fill: '#64748b' }} />
+								<YAxis
+									domain={[0, 100]}
+									tick={{ fill: '#64748b' }}
+									label={{
+										value: 'Confidence %',
+										angle: -90,
+										position: 'insideLeft',
+										style: { fill: '#64748b' },
+									}}
+								/>
+								<Tooltip
+									contentStyle={{
+										backgroundColor: 'rgba(255, 255, 255, 0.95)',
+										border: '1px solid #e0e7ff',
+										borderRadius: '8px',
+									}}
+									formatter={(value) => [`${value}%`, 'Confidence']}
+								/>
+								<Line
+									type='monotone'
+									dataKey='value'
+									stroke='#f43f5e'
+									strokeWidth={4}
+									dot={{ fill: '#f43f5e', r: 6 }}
+									activeDot={{ r: 8 }}
+								/>
+							</LineChart>
+						</ResponsiveContainer>
+					</div>
+				</motion.div>
 			</div>
 
 			{/* Summary Cards */}
