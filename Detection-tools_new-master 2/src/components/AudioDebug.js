@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import AudioPlayer from './AudioPlayer';
 import AudioWaveform from './AudioWaveform';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 const AudioDebug = () => {
-  const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
+  const apiBaseUrl = API_BASE_URL;
   const [testUrl, setTestUrl] = useState(`${apiBaseUrl}/uploads/test-audio-player.wav`);
   const [customUrl, setCustomUrl] = useState('');
 

@@ -6,6 +6,7 @@ import VideoCharts from './videoCharts';
 import AudioWaveform from '../AudioWaveform';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import {
 	LineChart,
 	Line,
@@ -66,7 +67,7 @@ function ChartsAnalysis({ result }) {
 
 	// Handle audio analysis charts
 	if (result.type === 'audio') {
-		const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
+		const apiBaseUrl = API_BASE_URL;
 		const baseAudioUrl = `${apiBaseUrl}/uploads/${fileId}${getFileExtension(
 			result.filename
 		)}`;

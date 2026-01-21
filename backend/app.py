@@ -105,16 +105,6 @@ else:
         max_age=3600,
     )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
-)
-
 # Global variables for detectors
 image_detector = None
 video_detector = None

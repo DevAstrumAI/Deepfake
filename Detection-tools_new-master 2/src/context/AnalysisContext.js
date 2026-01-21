@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
-// API base URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 // Initial state
 const initialState = {

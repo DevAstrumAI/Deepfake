@@ -23,6 +23,7 @@ import OverlayRenderer from './visual Evidence/overlays/OverlayRenderer';
 import { useVisualEvidence } from './visual Evidence/hooks/useVisualEvidence';
 import { useFrameExtraction } from './visual Evidence/hooks/useFrameExtraction';
 import { generateVisualEvidence } from './visual Evidence/utils/generateVisualEvidence';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 const VisualEvidence = ({
 	analysisResult,
@@ -137,7 +138,7 @@ const VisualEvidence = ({
 	};
  
 	// API paths for secure asset loading
-	const apiBaseUrl = process.env.REACT_APP_API_URL || 'https://deepfake-qbl3.onrender.com';
+	const apiBaseUrl = API_BASE_URL;
 	const baseFileUrl = fileId ? `${apiBaseUrl}/uploads/${fileId}` : null;
 	const secureFileUrl = baseFileUrl || null;
 

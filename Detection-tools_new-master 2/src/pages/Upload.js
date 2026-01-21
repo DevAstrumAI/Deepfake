@@ -20,12 +20,16 @@ import {
 } from 'lucide-react';
 import { useAnalysis } from '../context/AnalysisContext';
 import toast from 'react-hot-toast';
+import AnalysisModal from '../components/AnalysisModal';
 
 const Upload = () => {
 	const navigate = useNavigate();
 	const { api } = useAnalysis();
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [analysisStep, setAnalysisStep] = useState('upload');
+	const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+	const [currentFileName, setCurrentFileName] = useState('');
 
 	const onDrop = useCallback(
 		async (acceptedFiles) => {
@@ -40,10 +44,18 @@ const Upload = () => {
 
 			// Upload files
 			setIsProcessing(true);
+			setAnalysisStep('upload');
+			setCurrentFileName(newFiles[0]?.file?.name || '');
+			setShowAnalysisModal(true);
+			
 			try {
 				for (const fileData of newFiles) {
 					try {
 						const result = await api.uploadFile(fileData.file);
+						
+						// Mark upload as complete
+						setAnalysisStep('upload');
+						
 						setUploadedFiles((prev) =>
 							prev.map((f) =>
 								f.id === fileData.id
@@ -51,6 +63,12 @@ const Upload = () => {
 									: f
 							)
 						);
+						
+						// Close modal after upload completes
+						setTimeout(() => {
+							setShowAnalysisModal(false);
+							setIsProcessing(false);
+						}, 1000);
 					} catch (error) {
 						setUploadedFiles((prev) =>
 							prev.map((f) =>
@@ -59,9 +77,12 @@ const Upload = () => {
 									: f
 							)
 						);
+						setShowAnalysisModal(false);
+						setIsProcessing(false);
 					}
 				}
-			} finally {
+			} catch (error) {
+				setShowAnalysisModal(false);
 				setIsProcessing(false);
 			}
 		},
@@ -93,12 +114,25 @@ const Upload = () => {
 	const handleAnalyze = async (fileId) => {
 		try {
 			setIsProcessing(true);
+			setAnalysisStep('analyse');
+			setShowAnalysisModal(true);
+			
 			await api.startAnalysis(fileId);
-			navigate(`/results/${fileId}`);
+			
+			// Simulate progress through steps
+			setTimeout(() => setAnalysisStep('review'), 3000);
+			setTimeout(() => setAnalysisStep('report'), 6000);
+			
+			// Navigate after a brief delay to show completion
+			setTimeout(() => {
+				setShowAnalysisModal(false);
+				navigate(`/results/${fileId}`);
+			}, 8000);
 		} catch (error) {
 			console.error('Analysis failed:', error);
 			toast.error('Failed to start analysis');
 			setIsProcessing(false);
+			setShowAnalysisModal(false);
 		}
 	};
 
@@ -307,6 +341,17 @@ const Upload = () => {
 					</div>
 				</motion.div>
 			</div>
+
+			{/* Analysis Modal */}
+			<AnalysisModal
+				isOpen={showAnalysisModal}
+				onClose={() => {
+					setShowAnalysisModal(false);
+					setIsProcessing(false);
+				}}
+				currentStep={analysisStep}
+				fileName={currentFileName}
+			/>
 		</div>
 	);
 };
