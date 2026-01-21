@@ -14,12 +14,10 @@ import AudioDebug from './components/AudioDebug';
 
 // Context
 import { AnalysisProvider } from './context/AnalysisContext';
-import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <AnalysisProvider>
+    <AnalysisProvider>
         <Router>
           <div className="min-h-screen bg-gray-50">
             <Navbar />
@@ -67,7 +65,6 @@ function App() {
         </div>
       </Router>
     </AnalysisProvider>
-    </AuthProvider>
   );
 }
 
