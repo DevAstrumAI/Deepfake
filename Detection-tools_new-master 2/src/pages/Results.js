@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -12,17 +12,13 @@ import {
 	AlertTriangle,
 	BarChart3,
 	PieChart,
-	TrendingUp,
 	Clock,
 	FileText,
 	Eye,
-	Zap,
 	Trash2,
-	Info,
 	Sparkles,
 } from 'lucide-react';
 import { useAnalysis } from '../context/AnalysisContext';
-import { useAuth } from '../context/AuthContext';
 
 import toast from 'react-hot-toast';
 
@@ -66,7 +62,7 @@ const Results = () => {
 	}, [fileId, loading, result, files.length, showAllFiles]);
 
 	// Define fetchResults function outside useEffect so it can be used by retry button
-	const fetchResults = async () => {
+	const fetchResults = useCallback(async () => {
 		try {
 			// If no fileId, just show the files list
 			if (!fileId) {
@@ -152,14 +148,14 @@ const Results = () => {
 			toast.error('Failed to fetch results');
 			setLoading(false);
 		}
-	};
+	}, [fileId, api, files, loading]);
 
 	// Call fetchResults when component mounts or fileId changes
 	useEffect(() => {
 		if (fileId) {
 			fetchResults();
 		}
-	}, [fileId, api, files]);
+	}, [fileId, fetchResults]);
 
 	const formatConfidence = (confidence) => {
 		// Handle both decimal (0-1) and percentage (0-100) formats
@@ -171,8 +167,6 @@ const Results = () => {
 			return Math.round(confidence);
 		}
 	};
-
-	const { getAuthHeaders } = useAuth();
 
 	const generateReport = async () => {
 		if (!fileId) {

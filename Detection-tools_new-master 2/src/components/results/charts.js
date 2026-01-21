@@ -30,7 +30,6 @@ import {
 } from 'recharts';
 import {
 	TrendingUp,
-	TrendingDown,
 	Activity,
 	Zap,
 	Eye,
@@ -99,7 +98,6 @@ function ChartsAnalysis({ result }) {
 	const faceFeatures = details.face_features || {};
 	const forensic = faceFeatures.forensic_analysis || {};
 	const quality = faceFeatures.image_quality || {};
-	const frequency = faceFeatures.frequency_analysis || {};
 	const artifact = faceFeatures.artifact_analysis || {};
 	
 	// Get OpenAI detailed scores as fallback
