@@ -23,8 +23,9 @@ import toast from 'react-hot-toast';
 
 const Upload = () => {
 	const navigate = useNavigate();
-	const { api, loading } = useAnalysis();
+	const { api } = useAnalysis();
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [isProcessing, setIsProcessing] = useState(false);
 
 	const onDrop = useCallback(
 		async (acceptedFiles) => {
@@ -38,25 +39,30 @@ const Upload = () => {
 			setUploadedFiles((prev) => [...prev, ...newFiles]);
 
 			// Upload files
-			for (const fileData of newFiles) {
-				try {
-					const result = await api.uploadFile(fileData.file);
-					setUploadedFiles((prev) =>
-						prev.map((f) =>
-							f.id === fileData.id
-								? { ...f, ...result, status: 'uploaded', progress: 100 }
-								: f
-						)
-					);
-				} catch (error) {
-					setUploadedFiles((prev) =>
-						prev.map((f) =>
-							f.id === fileData.id
-								? { ...f, status: 'error', error: error.message }
-								: f
-						)
-					);
+			setIsProcessing(true);
+			try {
+				for (const fileData of newFiles) {
+					try {
+						const result = await api.uploadFile(fileData.file);
+						setUploadedFiles((prev) =>
+							prev.map((f) =>
+								f.id === fileData.id
+									? { ...f, ...result, status: 'uploaded', progress: 100 }
+									: f
+							)
+						);
+					} catch (error) {
+						setUploadedFiles((prev) =>
+							prev.map((f) =>
+								f.id === fileData.id
+									? { ...f, status: 'error', error: error.message }
+									: f
+							)
+						);
+					}
 				}
+			} finally {
+				setIsProcessing(false);
 			}
 		},
 		[api]
@@ -86,11 +92,13 @@ const Upload = () => {
 
 	const handleAnalyze = async (fileId) => {
 		try {
+			setIsProcessing(true);
 			await api.startAnalysis(fileId);
 			navigate(`/results/${fileId}`);
 		} catch (error) {
 			console.error('Analysis failed:', error);
 			toast.error('Failed to start analysis');
+			setIsProcessing(false);
 		}
 	};
 
@@ -268,7 +276,7 @@ const Upload = () => {
 						)}
 
 						<button
-							disabled={loading || uploadedFiles.length === 0}
+							disabled={isProcessing || uploadedFiles.length === 0}
 							onClick={() => {
 								// Determine action - analyze last uploaded file or all?
 								// For now, if files are uploaded, analyze the last one or prompt
@@ -284,7 +292,7 @@ const Upload = () => {
 								}
 							}}
 							className='w-full bg-purple-600 text-white font-bold text-lg py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-purple-700 transition-colors shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed'>
-							{loading ? (
+							{isProcessing ? (
 								<>
 									<Loader2 className='w-5 h-5 animate-spin' />
 									Processing...
