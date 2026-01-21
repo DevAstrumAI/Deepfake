@@ -22,8 +22,8 @@ function ImageAnalysisPanel({ analysisResult, safeVisualEvidence, details }) {
 		return Math.max(0, Math.min(100, numeric));
 	};
 
-	const formatPercentage = (value, decimals = 1) =>
-		normalizePercentageValue(value).toFixed(decimals);
+	// const formatPercentage = (value, decimals = 1) =>
+	// 	normalizePercentageValue(value).toFixed(decimals);
 
 	const formatConfidence = (confidence, decimals = 0) =>
 		Number(normalizePercentageValue(confidence).toFixed(decimals));

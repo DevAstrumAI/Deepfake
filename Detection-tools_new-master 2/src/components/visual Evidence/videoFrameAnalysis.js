@@ -3,27 +3,7 @@
 import React from 'react';
 import {
 	Eye,
-	ZoomIn,
-	ZoomOut,
-	RotateCcw,
-	Download,
-	AlertTriangle,
-	CheckCircle,
-	XCircle,
-	Info,
-	Target,
-	Layers,
-	Activity,
-	Play,
-	Pause,
-	SkipBack,
-	SkipForward,
-	Clock,
 	Filter,
-	ChevronLeft,
-	ChevronRight,
-	EyeOff,
-	Zap,
 } from 'lucide-react';
 
 function VideoFrameAnaylsis({
@@ -95,7 +75,7 @@ function VideoFrameAnaylsis({
 	const suspiciousFrames = frameResults.filter(
 		(frame) => frame.prediction === 'FAKE' || frame.confidence < 0.5
 	);
-	const filteredFrames = filterSuspicious ? suspiciousFrames : frameResults;
+	// const filteredFrames = filterSuspicious ? suspiciousFrames : frameResults;
 	return (
 		<>
 			<div className='mt-4 bg-white rounded-lg shadow-lg p-4'>

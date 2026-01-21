@@ -28,7 +28,7 @@ function VideoCharts({ result }) {
 	if (!result || !result.frame_analysis) return null;
 
 	const frameAnalysis = result.frame_analysis;
-	const videoInfo = result.video_info || {};
+	// const videoInfo = result.video_info || {};
 	const videoScore = result.video_score || {};
 
 	// Prepare frame data for charts

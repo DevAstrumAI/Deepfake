@@ -5,7 +5,6 @@ import {
 	AlertTriangle,
 	ChevronLeft,
 	ChevronRight,
-	EyeOff
 } from 'lucide-react';
 
 function ImageViewer({

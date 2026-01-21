@@ -10,7 +10,6 @@ import {
 	Zap,
 	Shield,
 	AlertTriangle,
-	Sparkles,
 } from 'lucide-react';
 
 function RenderSummary({ result }) {

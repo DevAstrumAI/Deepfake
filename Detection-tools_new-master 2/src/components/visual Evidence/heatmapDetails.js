@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-import { Layers, Activity, TrendingUp, AlertCircle } from 'lucide-react';
+import { Layers, Activity, AlertCircle } from 'lucide-react';
 
 function HeatmapDetails({ safeVisualEvidence }) {
 	const normalizePercentageValue = (value) => {

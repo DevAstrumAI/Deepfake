@@ -10,7 +10,6 @@ import {
 	Image,
 	Video,
 	Music,
-	X,
 	CheckCircle,
 	AlertCircle,
 	Loader2,

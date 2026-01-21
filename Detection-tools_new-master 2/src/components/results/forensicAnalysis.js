@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-import { Info, Shield, Activity, Search, AlertTriangle, CheckCircle, HelpCircle } from 'lucide-react';
+import { Info, Shield, Activity, Search, AlertTriangle, CheckCircle } from 'lucide-react';
 
 function ForensicAnalysis({ details }) {
 	if (!details?.face_features?.forensic_analysis) return null;

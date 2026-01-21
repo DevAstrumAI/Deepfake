@@ -72,7 +72,7 @@ export const useFrameExtraction = (
 		} finally {
 			setIsExtractingFrames(false);
 		}
-	}, [actualFileType, filteredFrames, videoRef, frameCanvasRef, setExtractedFrames, setIsExtractingFrames]);
+	}, [actualFileType, filteredFrames.length, videoRef, frameCanvasRef, setExtractedFrames, setIsExtractingFrames]);
 
 	useEffect(() => {
 		if (actualFileType === 'video' && filteredFrames.length > 0) {

@@ -7,7 +7,6 @@ import {
 	Activity,
 	CheckCircle,
 	XCircle,
-    Scan 
 } from 'lucide-react';
 
 function ImageAnalysis({ safeVisualEvidence }) {

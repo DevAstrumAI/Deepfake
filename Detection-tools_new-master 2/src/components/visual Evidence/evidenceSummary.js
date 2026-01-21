@@ -9,7 +9,7 @@ import {
 	CheckCircle,
 	XCircle
 } from 'lucide-react';
-import ImageAnalysis from './imageAnalysis';
+// import ImageAnalysis from './imageAnalysis';
 
 function EvidenceSummary({
 	actualFileType,

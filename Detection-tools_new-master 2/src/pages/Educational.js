@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, BookOpen, Zap, Shield, Lightbulb } from "lucide-react";
+import { ChevronDown, BookOpen, Shield, Lightbulb } from "lucide-react";
 
 import WhatAreDeepfakes from "../components/Education/WhatAreDeepfakes";
 import HowToSpot from "../components/Education/HowToSpot";

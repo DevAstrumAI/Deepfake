@@ -3,27 +3,12 @@
 import React from 'react';
 import {
 	Eye,
-	ZoomIn,
-	ZoomOut,
-	RotateCcw,
-	Download,
-	AlertTriangle,
-	CheckCircle,
-	XCircle,
-	Info,
 	Target,
 	Layers,
 	Activity,
-	Play,
-	Pause,
-	SkipBack,
-	SkipForward,
-	Clock,
-	Filter,
 	ChevronLeft,
 	ChevronRight,
-	EyeOff,
-	Zap,
+	AlertTriangle,
 } from 'lucide-react';
 
 const getOverlayOptionsByType = (type) => {

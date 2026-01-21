@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import {
 	Shield,
 	Upload,
-	BarChart3,
 	BookOpen,
 	Info,
 	Menu,

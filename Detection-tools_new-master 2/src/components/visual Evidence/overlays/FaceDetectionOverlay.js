@@ -84,7 +84,7 @@ const FaceDetectionOverlay = ({
 	const naturalHeight = img.naturalHeight;
 
 	// Get the actual displayed image dimensions (accounting for object-contain)
-	const imgRect = img.getBoundingClientRect();
+	// const imgRect = img.getBoundingClientRect();
 	const container = img.parentElement;
 	if (!container) return null;
 	const containerRect = container.getBoundingClientRect();
