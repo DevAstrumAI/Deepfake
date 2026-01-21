@@ -3,6 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 import {
   Shield,
   Upload,
@@ -23,6 +24,8 @@ import {
 } from "lucide-react";
 
 const Home = () => {
+  const { currentUser } = useAuth();
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -178,22 +181,41 @@ const Home = () => {
             transition={{ delay: 0.7, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link
-              to="/upload"
-              className="group relative px-8 py-4 text-white text-lg font-semibold rounded-xl shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #914ffc 0%, #7d3ee0 100%)',
-                boxShadow: '0 20px 40px rgba(145, 79, 252, 0.4)'
-              }}
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                Start Free Analysis
-              </span>
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
-                background: 'linear-gradient(135deg, #7d3ee0 0%, #914ffc 100%)'
-              }}></div>
-            </Link>
+            {currentUser ? (
+              <Link
+                to="/upload"
+                className="group relative px-8 py-4 text-white text-lg font-semibold rounded-xl shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #914ffc 0%, #7d3ee0 100%)',
+                  boxShadow: '0 20px 40px rgba(145, 79, 252, 0.4)'
+                }}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <Upload className="w-5 h-5" />
+                  Start Analysis
+                </span>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                  background: 'linear-gradient(135deg, #7d3ee0 0%, #914ffc 100%)'
+                }}></div>
+              </Link>
+            ) : (
+              <Link
+                to="/signup"
+                className="group relative px-8 py-4 text-white text-lg font-semibold rounded-xl shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #914ffc 0%, #7d3ee0 100%)',
+                  boxShadow: '0 20px 40px rgba(145, 79, 252, 0.4)'
+                }}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5" />
+                  Get Started
+                </span>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                  background: 'linear-gradient(135deg, #7d3ee0 0%, #914ffc 100%)'
+                }}></div>
+              </Link>
+            )}
 
             <Link
               to="/educational"
@@ -571,14 +593,25 @@ const Home = () => {
               Upload your media and get instant AI-powered analysis. No credit card required.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/upload"
-                className="group px-10 py-5 bg-white text-purple-600 text-lg font-bold rounded-xl shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <Upload className="w-6 h-6" />
-                Start Free Analysis
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              {currentUser ? (
+                <Link
+                  to="/upload"
+                  className="group px-10 py-5 bg-white text-purple-600 text-lg font-bold rounded-xl shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <Upload className="w-6 h-6" />
+                  Start Analysis
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              ) : (
+                <Link
+                  to="/signup"
+                  className="group px-10 py-5 bg-white text-purple-600 text-lg font-bold rounded-xl shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-6 h-6" />
+                  Get Started
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
               <Link
                 to="/educational"
                 className="px-10 py-5 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white text-lg font-bold rounded-xl hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2"

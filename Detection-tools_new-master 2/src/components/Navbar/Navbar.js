@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
 	Shield,
 	Upload,
@@ -9,6 +10,7 @@ import {
 	Info,
 	Menu,
 	X,
+	DollarSign,
 } from 'lucide-react';
 import NavbarLogo from './NavbarLogo';
 import NavbarLinks from './NavbarLinks';
@@ -23,12 +25,19 @@ const Navbar = () => {
 		{ name: 'Home', href: '/', icon: Shield },
 		{ name: 'Upload', href: '/upload', icon: Upload },
 		{ name: 'Learn', href: '/educational', icon: BookOpen },
+		{ name: 'Pricing', href: '/pricing', icon: DollarSign },
 		{ name: 'About', href: '/about', icon: Info },
 	];
 
 	const isActive = (path) => location.pathname === path;
 
+	const { currentUser } = useAuth();
+
 	const filteredNavigation = navigation.filter((item) => {
+		// Hide upload link if user is not logged in
+		if (item.href === '/upload' && !currentUser) {
+			return false;
+		}
 		if (item.href === '/upload' && location.pathname === '/upload') {
 			return false;
 		}
