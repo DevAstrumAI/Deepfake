@@ -136,7 +136,7 @@ Respond with JSON:
 {{
   "prediction": "REAL" or "FAKE",
   "confidence": 0.0-1.0,
-  "reasoning": "detailed explanation",
+  "reasoning": "Provide a comprehensive, detailed explanation (3-5 sentences) explaining WHY you determined this video frame is REAL or FAKE. Describe specific visual evidence you observed, such as: unnatural skin texture, inconsistent lighting patterns, blurry edges, artifacts around facial features, temporal inconsistencies, or any other indicators. Be specific about what you see that led to your conclusion. This explanation should help users understand the reasoning behind the detection.",
   "border_quality": 0.0-1.0,
   "edge_uniformity": 0.0-1.0,
   "lighting_consistency": 0.0-1.0,

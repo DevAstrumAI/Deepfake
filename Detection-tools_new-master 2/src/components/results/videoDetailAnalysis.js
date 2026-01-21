@@ -465,35 +465,17 @@ function VideoDetailAnalysis({ result }) {
 										</div>
 									</div>
 
-									{/* AI Model Predictions */}
-									{frame.details?.model_predictions && (
+									{/* AI Explanation */}
+									{frame.details?.openai_analysis?.reasoning && (
 										<div className='mb-4'>
-											<h4 className='font-semibold text-gray-900 mb-2'>
-												AI Model Predictions
+											<h4 className='font-semibold text-gray-900 mb-2 flex items-center gap-2'>
+												<span className='text-purple-600'>💡</span>
+												AI Explanation
 											</h4>
-											<div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-												{Object.entries(frame.details.model_predictions).map(
-													([model, prediction]) => {
-														const confidence =
-															frame.details.model_confidences?.[model] || 0;
-														return (
-															<div
-																key={model}
-																className='bg-white p-3 rounded border'>
-																<div className='font-medium text-sm'>
-																	{model.replace('_', ' ').toUpperCase()}
-																</div>
-																<div className='text-xs text-gray-600 mb-1'>
-																	Prediction:{' '}
-																	{prediction === 1 ? 'FAKE' : 'REAL'}
-																</div>
-																<div className='text-sm font-semibold'>
-																	{formatConfidence(confidence)}% Confidence
-																</div>
-															</div>
-														);
-													}
-												)}
+											<div className='bg-purple-50 rounded-lg p-4 border border-purple-200'>
+												<p className='text-sm text-gray-700 leading-relaxed whitespace-pre-wrap'>
+													{frame.details.openai_analysis.reasoning}
+												</p>
 											</div>
 										</div>
 									)}

@@ -5,7 +5,7 @@ import VideoDetailAnalysis from './videoDetailAnalysis';
 import AudioDetailedAnalysis from './audioAnalysis';
 import ForensicAnalysis from './forensicAnalysis';
 import FaceAnalysis from './faceAnalysis';
-import ModelPredictions from './modelPrediction';
+import Explainability from './explainability';
 
 function DetailedAnalysis({ result }) {
 	if (!result) return null;
@@ -27,9 +27,9 @@ function DetailedAnalysis({ result }) {
 	return (
 		<div className='space-y-6 max-w-6xl mx-auto'>
 			<div className='flex flex-col md:flex-row gap-6'>
-				{/* Model Predictions */}
+				{/* AI Explanation */}
 				<div className='flex-1'>
-					<ModelPredictions details={details} />
+					<Explainability details={details} result={result} />
 				</div>
 
 				{/* Face Analysis */}

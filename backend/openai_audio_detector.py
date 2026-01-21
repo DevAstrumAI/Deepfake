@@ -250,7 +250,7 @@ Provide your analysis as a JSON object with EXACTLY this structure (no markdown,
 {{
   "prediction": "REAL" or "FAKE" (choose one based on your analysis),
   "confidence": 0.0-1.0 (0.0 = very uncertain, 1.0 = very certain),
-  "reasoning": "detailed explanation of why you chose REAL or FAKE",
+  "reasoning": "Provide a comprehensive, detailed explanation (3-5 sentences) explaining WHY you determined this audio is REAL or FAKE. Describe specific audio characteristics you observed, such as: unnatural prosody, inconsistent voice quality, linguistic incoherence, unnatural pause patterns, audio artifacts, or any other indicators. Be specific about what you hear that led to your conclusion. This explanation should help users understand the reasoning behind the detection.",
   "naturalness_score": 0.0-1.0 (0.0 = very unnatural, 1.0 = very natural),
   "prosody_consistency": 0.0-1.0 (0.0 = inconsistent, 1.0 = consistent),
   "voice_quality": 0.0-1.0 (0.0 = inconsistent, 1.0 = consistent),

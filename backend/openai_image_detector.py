@@ -288,7 +288,7 @@ Provide your analysis as a JSON object with EXACTLY this structure (no markdown,
 {
   "prediction": "REAL" or "FAKE" (choose one based on your analysis),
   "confidence": 0.0-1.0 (0.0 = very uncertain, 1.0 = very certain),
-  "reasoning": "detailed explanation of why you chose REAL or FAKE",
+  "reasoning": "Provide a comprehensive, detailed explanation (3-5 sentences) explaining WHY you determined this media is REAL or FAKE. Describe specific visual evidence you observed, such as: unnatural skin texture, inconsistent lighting patterns, blurry edges, artifacts around facial features, eye reflections, or any other indicators. Be specific about what you see that led to your conclusion. This explanation should help users understand the reasoning behind the detection.",
   "border_quality": 0.0-1.0 (0.0 = very blurry/suspicious borders, 1.0 = sharp/natural borders),
   "edge_uniformity": 0.0-1.0 (0.0 = inconsistent edges, 1.0 = uniform edges),
   "lighting_consistency": 0.0-1.0 (0.0 = inconsistent lighting, 1.0 = consistent lighting),
@@ -302,7 +302,8 @@ IMPORTANT:
 - If the image looks natural and authentic, set prediction to "REAL" with high confidence (0.7-1.0)
 - If you see clear signs of deepfake/AI generation, set prediction to "FAKE" with high confidence (0.7-1.0)
 - Only use low confidence (0.3-0.6) if you're genuinely uncertain
-- Be honest and accurate in your assessment"""
+- Be honest and accurate in your assessment
+- The "reasoning" field is critical - provide a clear, detailed explanation that users can understand"""
             
             # Call OpenAI API with JSON response format if supported
             try:

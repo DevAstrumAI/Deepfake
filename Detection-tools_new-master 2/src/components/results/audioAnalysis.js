@@ -86,73 +86,41 @@ function AudioDetailedAnalysis({ result }) {
 					</div>
 				</div>
 
-				{/* Model Predictions */}
-				{Object.keys(modelPredictions).length > 0 && (
+				{/* AI Explanation */}
+				{details?.openai_analysis?.reasoning && (
 					<div className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300'>
-						<div className='bg-gradient-to-r from-indigo-500 to-purple-600 p-6'>
+						<div className='bg-gradient-to-r from-purple-500 to-purple-600 p-6'>
 							<h3 className='text-xl font-bold text-white flex items-center'>
-								<span className='text-2xl mr-3'>🤖</span>
-								AI Model Predictions
+								<span className='text-2xl mr-3'>💡</span>
+								AI Explanation
 							</h3>
 						</div>
 						<div className='p-6'>
-							<div className='space-y-4'>
-								{Object.entries(modelPredictions).map(([model, prediction]) => {
-									const confidence = modelConfidences[model] || 0;
-									const isFake = prediction === 1;
-									const modelDisplayName =
-										model === 'aasist'
-											? 'AASIST (Graph Attention)'
-											: model === 'rawnet2'
-											? 'RawNet2 (Raw Waveform)'
-											: model === 'hybrid'
-											? 'Hybrid Fusion'
-											: model;
-
-									const predictionBg = isFake
-										? 'bg-gradient-to-r from-red-50 to-red-100 border-red-200'
-										: 'bg-gradient-to-r from-green-50 to-green-100 border-green-200';
-									const predictionTextColor = isFake ? 'text-red-700' : 'text-green-700';
-									const predictionBadgeColor = isFake
-										? 'bg-red-500 text-white'
-										: 'bg-green-500 text-white';
-
-									return (
-										<div
-											key={model}
-											className={`p-5 rounded-xl border-2 ${predictionBg} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}>
-											<div className='flex items-center justify-between'>
-												<div className='flex-1'>
-													<div className='flex items-center mb-2'>
-														<span className={`px-3 py-1 rounded-full text-sm font-bold ${predictionBadgeColor} mr-3`}>
-															{isFake ? '🚫 FAKE' : '✅ REAL'}
-														</span>
-														<div className='font-bold text-gray-900 text-lg'>
-															{modelDisplayName}
-														</div>
-													</div>
-													<div className={`text-sm font-medium ${predictionTextColor}`}>
-														{isFake ? 'Synthetic audio detected' : 'Authentic audio confirmed'}
-													</div>
-												</div>
-												<div className='text-right ml-6'>
-													<div className='text-3xl font-black text-gray-900 mb-1'>
-														{formatConfidence(confidence)}%
-													</div>
-													<div className='text-sm text-gray-600 font-medium'>Confidence</div>
-													<div className='w-20 bg-gray-200 rounded-full h-2 mt-2'>
-														<div
-															className={`h-2 rounded-full transition-all duration-1000 ${
-																isFake ? 'bg-red-500' : 'bg-green-500'
-															}`}
-															style={{ width: `${formatConfidence(confidence)}%` }}></div>
-													</div>
-												</div>
-											</div>
-										</div>
-									);
-								})}
+							<div className='bg-purple-50 rounded-xl p-5 border border-purple-200 mb-4'>
+								<p className='text-gray-700 leading-relaxed whitespace-pre-wrap'>
+									{details.openai_analysis.reasoning}
+								</p>
 							</div>
+							{details.openai_analysis?.indicators &&
+								details.openai_analysis.indicators.length > 0 && (
+									<div>
+										<h4 className='font-semibold text-gray-800 mb-3'>
+											Deepfake Indicators Detected
+										</h4>
+										<div className='space-y-2'>
+											{details.openai_analysis.indicators.map(
+												(indicator, index) => (
+													<div
+														key={index}
+														className='bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2'>
+														<span className='text-red-500 text-sm'>⚠️</span>
+														<span className='text-sm text-red-700'>{indicator}</span>
+													</div>
+												)
+											)}
+										</div>
+									</div>
+								)}
 						</div>
 					</div>
 				)}
