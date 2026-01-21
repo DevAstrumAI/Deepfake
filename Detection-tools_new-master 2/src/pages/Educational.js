@@ -23,7 +23,7 @@ const Educational = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-150px" }}
             transition={{ duration: 0.8 }}
-            className="text-center max-w-5xl mx-auto"
+            className="text-center w-full px-4"
           >
             <div className="flex justify-center mb-8">
               <div className="w-24 h-24 bg-purple-200/70 rounded-full flex items-center justify-center shadow-inner">
@@ -103,7 +103,7 @@ const Educational = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-150px" }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="w-full max-w-7xl mx-auto"
+              className="w-full px-4"
             >
               {section.component}
             </motion.div>
