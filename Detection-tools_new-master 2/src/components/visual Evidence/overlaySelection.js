@@ -6,8 +6,6 @@ import {
 	Target,
 	Layers,
 	Activity,
-	ChevronLeft,
-	ChevronRight,
 	AlertTriangle,
 } from 'lucide-react';
 
