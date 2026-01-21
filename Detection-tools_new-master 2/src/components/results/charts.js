@@ -527,18 +527,18 @@ function ChartsAnalysis({ result }) {
 										);
 									}}
 								/>
-						</RechartsPieChart>
-					</ResponsiveContainer>
-						{/* Additional Info */}
-						<div className='mt-4 text-center'>
-							<p className='text-sm text-gray-600'>
-								<span className='font-semibold'>Overall Confidence:</span>{' '}
-								<span className='font-bold text-lg'>{confidencePercent}%</span>
-							</p>
-							<p className='text-xs text-gray-500 mt-1'>
-								Prediction: <span className='font-semibold'>{result.prediction}</span>
-							</p>
-						</div>
+							</RechartsPieChart>
+						</ResponsiveContainer>
+					</div>
+					{/* Additional Info */}
+					<div className='mt-4 text-center'>
+						<p className='text-sm text-gray-600'>
+							<span className='font-semibold'>Overall Confidence:</span>{' '}
+							<span className='font-bold text-lg'>{confidencePercent}%</span>
+						</p>
+						<p className='text-xs text-gray-500 mt-1'>
+							Prediction: <span className='font-semibold'>{result.prediction}</span>
+						</p>
 					</div>
 				</motion.div>
 
