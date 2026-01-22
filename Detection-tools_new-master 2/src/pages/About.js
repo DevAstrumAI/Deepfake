@@ -6,7 +6,6 @@ import { ChevronDown } from "lucide-react";
 import HeroSection from "../components/About/HeroSection";
 import MissionSection from "../components/About/MissionSection";
 import FeaturesSection from "../components/About/FeaturesSection";
-import TechnologySection from "../components/About/TechnologySection";
 import TeamSection from "../components/About/TeamSection";
 import ValuesSection from "../components/About/ValuesSection";
 import { Shield, Lightbulb } from "lucide-react";
@@ -49,11 +48,6 @@ const About = () => {
     {
       component: <FeaturesSection />,
       bg: "bg-gray-50",
-      dark: false,
-    },
-    {
-      component: <TechnologySection />,
-      bg: "bg-white",
       dark: false,
     },
     {
