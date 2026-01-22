@@ -2,7 +2,6 @@
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 
 // Your web app's Firebase configuration
@@ -28,7 +27,7 @@ if (process.env.NODE_ENV === 'development') {
 		projectId: firebaseConfig.projectId,
 		authDomain: firebaseConfig.authDomain,
 	});
-	
+
 	// Test auth initialization
 	auth.onAuthStateChanged((user) => {
 		if (user) {
@@ -39,9 +38,22 @@ if (process.env.NODE_ENV === 'development') {
 	});
 }
 
-// Initialize Analytics (only in browser environment)
-export const analytics =
-	typeof window !== 'undefined' ? getAnalytics(app) : null;
+// Initialize Analytics (only in production to avoid source map warnings)
+// Dynamically import to avoid loading in development
+let analytics = null;
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+	import('firebase/analytics')
+		.then((analyticsModule) => {
+			try {
+				analytics = analyticsModule.getAnalytics(app);
+			} catch (error) {
+				console.warn('Analytics initialization failed:', error);
+			}
+		})
+		.catch((error) => {
+			console.warn('Analytics module load failed:', error);
+		});
+}
+export { analytics };
 
 export default app;
-

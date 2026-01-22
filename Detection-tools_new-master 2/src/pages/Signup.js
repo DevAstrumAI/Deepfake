@@ -12,7 +12,6 @@ import {
 	AlertCircle,
 	Loader2,
 	CheckCircle,
-	Sparkles,
 	Zap,
 	Clock,
 	ShieldCheck,
