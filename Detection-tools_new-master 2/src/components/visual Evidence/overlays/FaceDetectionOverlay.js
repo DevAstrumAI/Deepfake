@@ -106,7 +106,7 @@ const FaceDetectionOverlay = ({
 
 	// Convert bounding box coordinates to displayed coordinates
 	const left = offsetX + bbox.x * scale;
-	const top = offsetY + bbox.y * scale;
+	const top = offsetY + bbox.y * scale - 8; // Move bounding box up by 8px
 	const width = bbox.width * scale;
 	const height = bbox.height * scale;
 
@@ -155,7 +155,7 @@ const FaceDetectionOverlay = ({
 				<div className='absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-blue-500 rounded-br-lg'></div>
 
 				{/* Label */}
-				<div className='absolute -top-12 left-1/2 transform -translate-x-1/2 bg-blue-600/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg whitespace-nowrap z-30 border border-blue-400/50 flex items-center gap-2 transition-all duration-300 hover:scale-105'>
+				<div className='absolute -top-14 left-1/2 transform -translate-x-1/2 bg-blue-600/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow-lg whitespace-nowrap z-30 border border-blue-400/50 flex items-center gap-2 transition-all duration-300 hover:scale-105'>
 					<Target className='w-3.5 h-3.5' />
 					<span>
 						Face Detected{' '}

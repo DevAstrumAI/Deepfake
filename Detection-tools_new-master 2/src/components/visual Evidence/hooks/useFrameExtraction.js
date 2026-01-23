@@ -1,7 +1,7 @@
 /** @format */
 
 import { useEffect, useCallback, useRef } from 'react';
-
+ 
 /**
  * Custom hook for extracting frames from video
  */
