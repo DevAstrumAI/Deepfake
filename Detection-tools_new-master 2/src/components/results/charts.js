@@ -422,15 +422,6 @@ function ChartsAnalysis({ result }) {
     { name: "Final", value: formatConfidence(result.confidence) },
   ];
 
-  const COLORS = {
-    primary: "#3b82f6",
-    success: "#22c55e",
-    danger: "#ef4444",
-    warning: "#f59e0b",
-    purple: "#8b5cf6",
-    pink: "#ec4899",
-  };
-
   return (
     <div className="space-y-8 pb-8">
       {/* Header */}
