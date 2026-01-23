@@ -25,7 +25,7 @@ import { useFrameExtraction } from './visual Evidence/hooks/useFrameExtraction';
 import { generateVisualEvidence } from './visual Evidence/utils/generateVisualEvidence';
 import { API_BASE_URL } from '../utils/apiConfig';
 
-const VisualEvidence = ({
+const VisualEvidence = ({ 
 	analysisResult,
 	fileId,
 	fileType,

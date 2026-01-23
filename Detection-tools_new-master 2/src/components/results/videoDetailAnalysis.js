@@ -4,6 +4,7 @@ import React from 'react';
 import { Lightbulb } from 'lucide-react';
 
 function VideoDetailAnalysis({ result }) {
+	console.log('VideoDetailAnalysis result:', result);
 	const formatConfidence = (confidence) => {
 		// Handle both decimal (0-1) and percentage (0-100) formats
 		if (confidence <= 1) {

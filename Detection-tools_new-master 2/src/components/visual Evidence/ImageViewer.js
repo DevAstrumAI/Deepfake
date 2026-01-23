@@ -278,7 +278,7 @@ function ImageViewer({
 											baseFileUrl
 										}
 										alt='Analysis target'
-										className='w-full h-auto max-h-[600px] object-contain cursor-move block rounded-2xl shadow-xl relative z-0'
+										className='w-full h-auto max-h-[450px] object-contain cursor-move block rounded-2xl shadow-xl relative z-0'
 										draggable={false}
 										style={{
 											transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${
